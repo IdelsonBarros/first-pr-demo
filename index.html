@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<title>Artefato</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Cola ideias soltas e o Artefato arruma-as por área da vida ou projeto, e ordena-as pelo que rende mais bem-estar, dinheiro ou tempo." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDEAE3;
+    --surface: #F8F6F2;
+    --surface-2: #E6E1D6;
+    --border: #D7D0C0;
+    --text: #232019;
+    --text-dim: #6E695D;
+    --accent: #A9700F;
+    --accent-ink: #FFFFFF;
+    --danger: #A8402F;
+    --danger-ink: #FFFFFF;
+
+    --cat-casa: #A0552A;
+    --cat-capoeira: #297A5E;
+    --cat-financas: #29628F;
+    --cat-phakite: #6D4BB0;
+    --cat-outros: #57606B;
+
+    --shadow: 0 1px 2px rgba(35, 32, 25, 0.06), 0 8px 20px -12px rgba(35, 32, 25, 0.18);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16181C;
+      --surface: #1E2126;
+      --surface-2: #262A31;
+      --border: #34383F;
+      --text: #EAE7DE;
+      --text-dim: #9A9FA8;
+      --accent: #D9A441;
+      --accent-ink: #1A1408;
+      --danger: #E2695C;
+      --danger-ink: #241210;
+
+      --cat-casa: #E08A5C;
+      --cat-capoeira: #5FC7A3;
+      --cat-financas: #6FA9DE;
+      --cat-phakite: #B69BEA;
+      --cat-outros: #9AA3AF;
+
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #16181C;
+    --surface: #1E2126;
+    --surface-2: #262A31;
+    --border: #34383F;
+    --text: #EAE7DE;
+    --text-dim: #9A9FA8;
+    --accent: #D9A441;
+    --accent-ink: #1A1408;
+    --danger: #E2695C;
+    --danger-ink: #241210;
+
+    --cat-casa: #E08A5C;
+    --cat-capoeira: #5FC7A3;
+    --cat-financas: #6FA9DE;
+    --cat-phakite: #B69BEA;
+    --cat-outros: #9AA3AF;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  body {
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .wordmark {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.1rem, 4vw, 2.75rem);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .wordmark .flourish { color: var(--accent); }
+
+  .tagline {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 1rem;
+    text-wrap: balance;
+  }
+
+  .capture {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  textarea#ideaInput {
+    width: 100%;
+    resize: vertical;
+    min-height: 76px;
+    font: inherit;
+    font-size: 1.02rem;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  textarea#ideaInput::placeholder { color: var(--text-dim); opacity: 0.85; }
+
+  .capture-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-primary:active { transform: translateY(1px); }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip-filter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 999px;
+    padding: 6px 13px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .chip-filter .count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.78rem;
+    opacity: 0.75;
+  }
+
+  .chip-filter:hover { color: var(--text); }
+
+  .chip-filter[aria-pressed="true"] {
+    color: var(--text);
+    border-color: currentColor;
+    background: var(--surface-2);
+  }
+
+  .chip-filter[data-cat] { color: var(--dot-color, var(--text-dim)); }
+
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: var(--text-dim);
+  }
+
+  select {
+    font-family: inherit;
+    font-size: 0.84rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .card:hover { transform: translateY(-2px); }
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--cat-color);
+    background: color-mix(in srgb, var(--cat-color) 16%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--cat-color) 38%, var(--border));
+    border-radius: 999px;
+    padding: 3px 9px 3px 7px;
+  }
+
+  .cat-chip .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cat-color);
+    flex: none;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 5px;
+  }
+
+  .delete-btn:hover { color: var(--danger-ink); background: var(--danger); }
+
+  .idea-text {
+    font-size: 0.98rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .axes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .axis-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .axis-meter {
+    display: flex;
+    gap: 3px;
+  }
+
+  .axis-seg {
+    height: 5px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .axis-seg.filled {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .priority .dots { display: inline-flex; gap: 2px; }
+
+  .priority .pdot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .priority .pdot.on { background: var(--accent); }
+
+  .meta-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .timestamp {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .reclass {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 5px;
+    max-width: 96px;
+  }
+
+  .footer {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    text-align: center;
+    padding-top: 8px;
+  }
+
+  .footer p { margin: 0; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <h1 class="wordmark">Art<span class="flourish">e</span>fato</h1>
+      <p class="tagline">Cola as ideias soltas que tiveste. Ele arruma-as por área da vida e mostra o que vale mais a pena.</p>
+    </header>
+
+    <section class="capture" aria-label="Registar nova ideia">
+      <label class="field-label" for="ideaInput">Nova ideia</label>
+      <textarea id="ideaInput" rows="3" placeholder="Cola aqui a tua ideia... (uma por linha se forem várias de uma vez)"></textarea>
+      <div class="capture-row">
+        <span class="hint">Enter guarda · Shift+Enter para nova linha</span>
+        <button type="button" class="btn-primary" id="submitBtn">Guardar e classificar</button>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="chips" id="filterChips" role="group" aria-label="Filtrar por categoria"></div>
+      <div class="sort">
+        <label for="sortSelect">Ordenar</label>
+        <select id="sortSelect">
+          <option value="priority">Mais relevantes</option>
+          <option value="recent">Mais recentes</option>
+        </select>
+      </div>
+    </section>
+
+    <main class="board" id="board" aria-live="polite"></main>
+
+    <footer class="footer">
+      <p>As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
+    </footer>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "artefato:ideas:v1";
+
+  var CATEGORIES = [
+    { id: "casa", label: "Casa", group: "Vida", color: "var(--cat-casa)",
+      keywords: ["casa","cozinha","quarto","sala","banheiro","wc","jardim","quintal","limpeza","limpar","arrumar","arrumacao","organizar a casa","moveis","mobilia","reforma","pintura","decoracao","decorar","eletrodomestico","manutencao","horta","lavanderia","garagem","renda da casa","obras"] },
+    { id: "capoeira", label: "Capoeira", group: "Vida", color: "var(--cat-capoeira)",
+      keywords: ["capoeira","roda","berimbau","ginga","mestre","corda","batizado","treino","aula de capoeira","atabaque","pandeiro","movimento corporal","acrobacia","roda de capoeira","grupo de capoeira","malicia","jogo de capoeira","apresentacao de capoeira"] },
+    { id: "financas", label: "Finanças", group: "Vida", color: "var(--cat-financas)",
+      keywords: ["dinheiro","financas","financeiro","investir","investimento","poupanca","poupar","orcamento","divida","dividas","banco","acoes","cripto","criptomoeda","salario","gasto","gastos","renda extra","imposto","fatura","cartao de credito","emprestimo","economizar","economia domestica"] },
+    { id: "phakite", label: "Phakite", group: "Projetos", color: "var(--cat-phakite)",
+      keywords: ["phakite"] },
+    { id: "outros", label: "Outros", group: "Projetos", color: "var(--cat-outros)",
+      keywords: [] }
+  ];
+
+  var CAT_BY_ID = {};
+  CATEGORIES.forEach(function (c) { CAT_BY_ID[c.id] = c; });
+
+  var AXES = [
+    { id: "bemEstar", label: "Bem-estar",
+      keywords: ["saude","bem-estar","bem estar","relaxar","descanso","descansar","dormir","meditar","meditacao","familia","amigos","feliz","felicidade","alegria","exercicio","exercitar","correr","alongamento","ar livre","natureza","viagem","ferias","lazer","hobby","tempo livre","autocuidado","terapia"] },
+    { id: "dinheiro", label: "Dinheiro",
+      keywords: ["vender","venda","lucro","lucrativo","renda extra","renda","cliente","clientes","negocio","negocios","investir","investimento","ganhar dinheiro","faturar","faturamento","preco","precificar","monetizar","assinatura","produto pago","servico pago","comissao","patrocinio","parceria paga"] },
+    { id: "tempo", label: "Tempo",
+      keywords: ["automatizar","automatizacao","automatico","rapido","rapida","eficiente","eficiencia","produtividade","produtivo","organizar","organizacao","simplificar","otimizar","otimizacao","agilizar","atalho","template","modelo pronto","checklist","rotina","agenda","planejamento","delegar"] }
+  ];
+
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function countHits(normText, keywords) {
+    var hits = 0;
+    for (var i = 0; i < keywords.length; i++) {
+      if (normText.indexOf(keywords[i]) !== -1) hits++;
+    }
+    return hits;
+  }
+
+  function classify(text) {
+    var norm = normalize(text);
+
+    // A named project (e.g. "phakite") is a deliberate, unambiguous signal
+    // that outranks generic life-area keywords picked up in the same idea.
+    var categoryId = null;
+    if (norm.indexOf("phakite") !== -1) {
+      categoryId = "phakite";
+    } else {
+      var bestHits = 0;
+      ["casa", "capoeira", "financas"].forEach(function (id) {
+        var hits = countHits(norm, CAT_BY_ID[id].keywords);
+        if (hits > bestHits) { bestHits = hits; categoryId = id; }
+      });
+    }
+    if (!categoryId) categoryId = "outros";
+
+    var scores = {};
+    var axesHit = 0;
+    AXES.forEach(function (axis) {
+      var hits = countHits(norm, axis.keywords);
+      if (hits > 0) axesHit++;
+      scores[axis.id] = Math.min(hits, 3);
+    });
+
+    var priority = "baixa";
+    if (axesHit >= 2) priority = "alta";
+    else if (axesHit === 1) priority = "media";
+
+    return { categoryId: categoryId, scores: scores, priority: priority };
+  }
+
+  function loadIdeas() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveIdeas(ideas) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+    } catch (e) { /* storage unavailable, ideas stay in memory for this render */ }
+  }
+
+  function uid() {
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+  }
+
+  function relativeTime(ts) {
+    var diffMs = Date.now() - ts;
+    var mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return "agora";
+    if (mins < 60) return "há " + mins + "min";
+    var hours = Math.floor(mins / 60);
+    if (hours < 24) return "há " + hours + "h";
+    var days = Math.floor(hours / 24);
+    return "há " + days + "d";
+  }
+
+  var ideas = loadIdeas();
+  var activeFilter = "all";
+
+  var boardEl = document.getElementById("board");
+  var chipsEl = document.getElementById("filterChips");
+  var sortEl = document.getElementById("sortSelect");
+  var inputEl = document.getElementById("ideaInput");
+  var submitBtn = document.getElementById("submitBtn");
+
+  function addIdeasFromText(raw) {
+    var lines = raw.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
+    if (!lines.length) return;
+    lines.forEach(function (line) {
+      var result = classify(line);
+      ideas.push({
+        id: uid(),
+        text: line,
+        categoryId: result.categoryId,
+        scores: result.scores,
+        priority: result.priority,
+        createdAt: Date.now()
+      });
+    });
+    saveIdeas(ideas);
+    render();
+  }
+
+  submitBtn.addEventListener("click", function () {
+    addIdeasFromText(inputEl.value);
+    inputEl.value = "";
+    inputEl.focus();
+  });
+
+  inputEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      addIdeasFromText(inputEl.value);
+      inputEl.value = "";
+    }
+  });
+
+  sortEl.addEventListener("change", render);
+
+  function priorityRank(p) {
+    return p === "alta" ? 2 : p === "media" ? 1 : 0;
+  }
+
+  function renderChips() {
+    chipsEl.innerHTML = "";
+    var allCount = ideas.length;
+    chipsEl.appendChild(makeChip("all", "Todas", allCount, null));
+    CATEGORIES.forEach(function (cat) {
+      var count = ideas.filter(function (i) { return i.categoryId === cat.id; }).length;
+      chipsEl.appendChild(makeChip(cat.id, cat.label, count, cat.color));
+    });
+  }
+
+  function makeChip(id, label, count, color) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip-filter";
+    btn.dataset.cat = id;
+    btn.setAttribute("aria-pressed", String(activeFilter === id));
+    if (color) btn.style.setProperty("--dot-color", color);
+    btn.innerHTML = label + ' <span class="count">' + count + "</span>";
+    btn.addEventListener("click", function () {
+      activeFilter = id;
+      render();
+    });
+    return btn;
+  }
+
+  function renderAxisRow(axis, value) {
+    var segs = "";
+    for (var i = 0; i < 3; i++) {
+      segs += '<span class="axis-seg' + (i < value ? " filled" : "") + '"></span>';
+    }
+    return '<div class="axis-row"><span>' + axis.label + '</span><span class="axis-meter">' + segs + "</span></div>";
+  }
+
+  function renderPriorityDots(priority) {
+    var rank = priorityRank(priority) + 1;
+    var dots = "";
+    for (var i = 0; i < 3; i++) {
+      dots += '<span class="pdot' + (i < rank ? " on" : "") + '"></span>';
+    }
+    var label = priority === "alta" ? "Alta" : priority === "media" ? "Média" : "Baixa";
+    return '<span class="priority"><span class="dots">' + dots + "</span>" + label + "</span>";
+  }
+
+  function renderCategorySelect(idea) {
+    var select = document.createElement("select");
+    select.className = "reclass";
+    select.setAttribute("aria-label", "Reclassificar ideia");
+    var groups = {};
+    CATEGORIES.forEach(function (cat) {
+      if (!groups[cat.group]) groups[cat.group] = document.createElement("optgroup");
+      groups[cat.group].label = cat.group;
+    });
+    Object.keys(groups).forEach(function (g) { select.appendChild(groups[g]); });
+    CATEGORIES.forEach(function (cat) {
+      var opt = document.createElement("option");
+      opt.value = cat.id;
+      opt.textContent = cat.label;
+      if (cat.id === idea.categoryId) opt.selected = true;
+      groups[cat.group].appendChild(opt);
+    });
+    select.addEventListener("change", function () {
+      idea.categoryId = select.value;
+      saveIdeas(ideas);
+      render();
+    });
+    return select;
+  }
+
+  function renderCard(idea) {
+    var cat = CAT_BY_ID[idea.categoryId] || CAT_BY_ID.outros;
+    var card = document.createElement("article");
+    card.className = "card";
+    card.style.setProperty("--cat-color", cat.color);
+
+    var top = document.createElement("div");
+    top.className = "card-top";
+    top.innerHTML = '<span class="cat-chip"><span class="dot"></span>' + cat.label + "</span>";
+
+    var del = document.createElement("button");
+    del.className = "delete-btn";
+    del.type = "button";
+    del.setAttribute("aria-label", "Apagar ideia");
+    del.textContent = "×";
+    del.addEventListener("click", function () {
+      ideas = ideas.filter(function (i) { return i.id !== idea.id; });
+      saveIdeas(ideas);
+      render();
+    });
+    top.appendChild(del);
+
+    var text = document.createElement("p");
+    text.className = "idea-text";
+    text.textContent = idea.text;
+
+    var axesWrap = document.createElement("div");
+    axesWrap.className = "axes";
+    axesWrap.innerHTML = AXES.map(function (axis) {
+      return renderAxisRow(axis, idea.scores[axis.id] || 0);
+    }).join("");
+
+    var bottom = document.createElement("div");
+    bottom.className = "card-bottom";
+    bottom.innerHTML = renderPriorityDots(idea.priority);
+
+    var metaRight = document.createElement("div");
+    metaRight.className = "meta-right";
+    var ts = document.createElement("span");
+    ts.className = "timestamp";
+    ts.textContent = relativeTime(idea.createdAt);
+    metaRight.appendChild(renderCategorySelect(idea));
+    metaRight.appendChild(ts);
+    bottom.appendChild(metaRight);
+
+    card.appendChild(top);
+    card.appendChild(text);
+    card.appendChild(axesWrap);
+    card.appendChild(bottom);
+    return card;
+  }
+
+  function render() {
+    renderChips();
+
+    var filtered = activeFilter === "all"
+      ? ideas.slice()
+      : ideas.filter(function (i) { return i.categoryId === activeFilter; });
+
+    if (sortEl.value === "priority") {
+      filtered.sort(function (a, b) {
+        var diff = priorityRank(b.priority) - priorityRank(a.priority);
+        return diff !== 0 ? diff : b.createdAt - a.createdAt;
+      });
+    } else {
+      filtered.sort(function (a, b) { return b.createdAt - a.createdAt; });
+    }
+
+    boardEl.innerHTML = "";
+    if (!filtered.length) {
+      var empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = ideas.length
+        ? "Sem ideias nesta categoria."
+        : "Ainda sem ideias. Cola a primeira ali em cima.";
+      boardEl.appendChild(empty);
+      return;
+    }
+    filtered.forEach(function (idea) { boardEl.appendChild(renderCard(idea)); });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
