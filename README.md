@@ -6,7 +6,7 @@ Repositório de prática para aprender o fluxo de Pull Request no GitHub.
 
 Este projeto foi criado para testar o fluxo completo de contribuição via Pull Request: branch, commit, push e revisão.
 
-## Artefato — gestor de ideias e projetos
+## uCOPO — gestor de ideias e projetos
 
 `index.html` é uma aplicação web de página única: cola uma ideia (ou várias, uma por linha) e ela é automaticamente:
 
