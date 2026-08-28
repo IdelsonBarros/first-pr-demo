@@ -434,6 +434,120 @@
   }
 
   .footer p { margin: 0; }
+
+  .capture-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-attach {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
+  }
+
+  .btn-attach:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .pending-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .pending-preview[hidden] { display: none; }
+
+  .pending-preview img {
+    height: 44px;
+    width: 44px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .pending-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .remove-pending {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 0.76rem;
+  }
+
+  .remove-pending:hover { color: var(--danger-ink); background: var(--danger); border-color: var(--danger); }
+
+  .card-image-wrap {
+    position: relative;
+  }
+
+  .card-image {
+    display: block;
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+  }
+
+  .remove-image-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    font-size: 0.9rem;
+  }
+
+  .remove-image-btn:hover { background: var(--danger); }
+
+  .add-image-btn {
+    align-self: flex-start;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 0.76rem;
+  }
+
+  .add-image-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: zoom-out;
+    z-index: 10;
+  }
+
+  .lightbox[hidden] { display: none; }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+  }
 </style>
 </head>
 <body>
@@ -446,9 +560,18 @@
     <section class="capture" aria-label="Registar nova ideia">
       <label class="field-label" for="ideaInput">Nova ideia</label>
       <textarea id="ideaInput" rows="3" placeholder="Cola aqui a tua ideia... (uma por linha se forem várias de uma vez)"></textarea>
+      <div class="pending-preview" id="pendingPreview" hidden>
+        <img id="pendingImg" alt="Imagem anexada à próxima ideia" />
+        <span class="pending-label">Imagem anexada à próxima ideia</span>
+        <button type="button" class="remove-pending" id="removePendingBtn">Remover</button>
+      </div>
       <div class="capture-row">
-        <span class="hint">Enter guarda · Shift+Enter para nova linha</span>
-        <button type="button" class="btn-primary" id="submitBtn">Guardar e classificar</button>
+        <span class="hint">Enter guarda · Shift+Enter para nova linha · Ctrl+V cola uma imagem</span>
+        <div class="capture-actions">
+          <input type="file" id="imageInput" accept="image/*" hidden />
+          <button type="button" class="btn-attach" id="attachBtn" aria-label="Anexar imagem">📎 Imagem</button>
+          <button type="button" class="btn-primary" id="submitBtn">Guardar e classificar</button>
+        </div>
       </div>
     </section>
 
@@ -468,6 +591,10 @@
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
     </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <img id="lightboxImg" alt="Imagem ampliada" />
   </div>
 
 <script type="application/json" id="ideas-data">[]</script>
@@ -912,6 +1039,120 @@
   }
 
   .footer p { margin: 0; }
+
+  .capture-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-attach {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
+  }
+
+  .btn-attach:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .pending-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .pending-preview[hidden] { display: none; }
+
+  .pending-preview img {
+    height: 44px;
+    width: 44px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .pending-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .remove-pending {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 0.76rem;
+  }
+
+  .remove-pending:hover { color: var(--danger-ink); background: var(--danger); border-color: var(--danger); }
+
+  .card-image-wrap {
+    position: relative;
+  }
+
+  .card-image {
+    display: block;
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+  }
+
+  .remove-image-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    font-size: 0.9rem;
+  }
+
+  .remove-image-btn:hover { background: var(--danger); }
+
+  .add-image-btn {
+    align-self: flex-start;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 0.76rem;
+  }
+
+  .add-image-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: zoom-out;
+    z-index: 10;
+  }
+
+  .lightbox[hidden] { display: none; }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+  }
 </style>
 </head>
 <body>
@@ -924,9 +1165,18 @@
     <section class="capture" aria-label="Registar nova ideia">
       <label class="field-label" for="ideaInput">Nova ideia</label>
       <textarea id="ideaInput" rows="3" placeholder="Cola aqui a tua ideia... (uma por linha se forem várias de uma vez)"></textarea>
+      <div class="pending-preview" id="pendingPreview" hidden>
+        <img id="pendingImg" alt="Imagem anexada à próxima ideia" />
+        <span class="pending-label">Imagem anexada à próxima ideia</span>
+        <button type="button" class="remove-pending" id="removePendingBtn">Remover</button>
+      </div>
       <div class="capture-row">
-        <span class="hint">Enter guarda · Shift+Enter para nova linha</span>
-        <button type="button" class="btn-primary" id="submitBtn">Guardar e classificar</button>
+        <span class="hint">Enter guarda · Shift+Enter para nova linha · Ctrl+V cola uma imagem</span>
+        <div class="capture-actions">
+          <input type="file" id="imageInput" accept="image/*" hidden />
+          <button type="button" class="btn-attach" id="attachBtn" aria-label="Anexar imagem">📎 Imagem</button>
+          <button type="button" class="btn-primary" id="submitBtn">Guardar e classificar</button>
+        </div>
       </div>
     </section>
 
@@ -946,6 +1196,10 @@
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
     </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <img id="lightboxImg" alt="Imagem ampliada" />
   </div>
 
 `;
@@ -1077,35 +1331,114 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
     } catch (e) { /* storage unavailable, ideas stay in memory for this render */ }
     if (artifactCap) {
-      artifactCap.publish(buildFullDocument()).catch(function () {
+      artifactCap.publish(buildFullDocument()).catch(function (err) {
         // "conflict": the platform is already reloading every view to the
-        // winning version. Anything else: this browser's localStorage
-        // write above still stands as a fallback.
+        // winning version. "too_large": likely too many/too big images —
+        // this browser's localStorage write above still stands, just say
+        // so. Anything else: same fallback, silently.
+        if (err && err.code === "too_large") updateSyncNote("too_large");
       });
     }
   }
 
-  function updateSyncNote() {
+  function updateSyncNote(warning) {
     var note = document.getElementById("syncNote");
     if (!note) return;
+    if (warning === "too_large") {
+      note.textContent = "Não sincronizou desta vez (fica grande demais com as imagens) — guardado só neste navegador.";
+      return;
+    }
     note.textContent = artifactCap
       ? "As tuas ideias estão sincronizadas com este artifact — abre o mesmo link em qualquer dispositivo para as veres."
       : "As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.";
   }
 
+  // Images are downscaled client-side and kept as data URIs on the idea
+  // itself (idea.image), so they ride along with the same persist() path as
+  // the text — no extra capability needed. Keeping them modest in size
+  // matters here: both localStorage and a published artifact reject a
+  // document past a size limit.
+  var MAX_IMAGE_DIM = 1600;
+
+  function downscaleImage(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, MAX_IMAGE_DIM / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale) || 1;
+        var h = Math.round(img.height * scale) || 1;
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { callback(null); };
+      img.src = reader.result;
+    };
+    reader.onerror = function () { callback(null); };
+    reader.readAsDataURL(file);
+  }
+
   var ideas = loadInitialIdeas();
   var activeFilter = "all";
+  var pendingImage = null;
 
   var boardEl = document.getElementById("board");
   var chipsEl = document.getElementById("filterChips");
   var sortEl = document.getElementById("sortSelect");
   var inputEl = document.getElementById("ideaInput");
   var submitBtn = document.getElementById("submitBtn");
+  var attachBtn = document.getElementById("attachBtn");
+  var imageInput = document.getElementById("imageInput");
+  var pendingPreviewEl = document.getElementById("pendingPreview");
+  var pendingImgEl = document.getElementById("pendingImg");
+  var removePendingBtn = document.getElementById("removePendingBtn");
+  var lightboxEl = document.getElementById("lightbox");
+  var lightboxImgEl = document.getElementById("lightboxImg");
+
+  function setPendingImage(dataUrl) {
+    pendingImage = dataUrl;
+    pendingImgEl.src = dataUrl || "";
+    pendingPreviewEl.hidden = !dataUrl;
+  }
+
+  attachBtn.addEventListener("click", function () { imageInput.click(); });
+
+  imageInput.addEventListener("change", function () {
+    var file = imageInput.files && imageInput.files[0];
+    imageInput.value = "";
+    if (file) downscaleImage(file, setPendingImage);
+  });
+
+  removePendingBtn.addEventListener("click", function () { setPendingImage(null); });
+
+  inputEl.addEventListener("paste", function (e) {
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf("image/") === 0) {
+        var file = items[i].getAsFile();
+        if (file) {
+          e.preventDefault();
+          downscaleImage(file, setPendingImage);
+        }
+        break;
+      }
+    }
+  });
+
+  function openLightbox(src) {
+    lightboxImgEl.src = src;
+    lightboxEl.hidden = false;
+  }
+
+  lightboxEl.addEventListener("click", function () { lightboxEl.hidden = true; });
 
   function addIdeasFromText(raw) {
     var lines = raw.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
     if (!lines.length) return;
-    lines.forEach(function (line) {
+    lines.forEach(function (line, index) {
       var result = classify(line);
       ideas.push({
         id: uid(),
@@ -1113,9 +1446,14 @@
         categoryId: result.categoryId,
         scores: result.scores,
         priority: result.priority,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        // A pending image (pasted or attached) belongs to whatever is being
+        // composed right now, so it only rides along with the first idea of
+        // this batch, not every line.
+        image: index === 0 ? pendingImage : null
       });
     });
+    setPendingImage(null);
     persist();
     render();
   }
@@ -1208,6 +1546,53 @@
     return select;
   }
 
+  function renderIdeaImage(idea) {
+    if (idea.image) {
+      var wrap = document.createElement("div");
+      wrap.className = "card-image-wrap";
+      var img = document.createElement("img");
+      img.className = "card-image";
+      img.src = idea.image;
+      img.alt = "Imagem anexada à ideia";
+      img.addEventListener("click", function () { openLightbox(idea.image); });
+      var remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "remove-image-btn";
+      remove.setAttribute("aria-label", "Remover imagem");
+      remove.textContent = "×";
+      remove.addEventListener("click", function (e) {
+        e.stopPropagation();
+        idea.image = null;
+        persist();
+        render();
+      });
+      wrap.appendChild(img);
+      wrap.appendChild(remove);
+      return wrap;
+    }
+    var addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "add-image-btn";
+    addBtn.textContent = "+ imagem";
+    addBtn.addEventListener("click", function () {
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.addEventListener("change", function () {
+        var file = input.files && input.files[0];
+        if (file) {
+          downscaleImage(file, function (dataUrl) {
+            idea.image = dataUrl;
+            persist();
+            render();
+          });
+        }
+      });
+      input.click();
+    });
+    return addBtn;
+  }
+
   function renderCard(idea) {
     var cat = CAT_BY_ID[idea.categoryId] || CAT_BY_ID.outros;
     var card = document.createElement("article");
@@ -1255,6 +1640,7 @@
 
     card.appendChild(top);
     card.appendChild(text);
+    card.appendChild(renderIdeaImage(idea));
     card.appendChild(axesWrap);
     card.appendChild(bottom);
     return card;

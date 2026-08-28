@@ -13,7 +13,7 @@ Este projeto foi criado para testar o fluxo completo de contribuição via Pull 
 - **Categorizada** numa sessão da vida (Casa, Capoeira, Finanças) ou num projeto (Phakite, Outros), por palavras-chave no texto.
 - **Classificada por relevância** (Baixa / Média / Alta), consoante indica gerar mais bem-estar, mais dinheiro e/ou poupar mais tempo.
 
-Cada ideia pode ser reclassificada manualmente a qualquer momento.
+Cada ideia pode ser reclassificada manualmente a qualquer momento, e pode ter uma imagem anexada (print, foto, etc.) — cola-a com Ctrl+V na caixa de texto, usa o botão "Imagem" ao lado de guardar, ou o "+ imagem" em qualquer ideia já criada. As imagens são reduzidas automaticamente antes de serem guardadas.
 
 Para usar, basta abrir `index.html` diretamente no navegador — não precisa de build nem de servidor.
 
