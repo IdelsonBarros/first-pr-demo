@@ -24,8 +24,12 @@
     --cat-casa: #A0552A;
     --cat-capoeira: #297A5E;
     --cat-financas: #29628F;
-    --cat-phakite: #6D4BB0;
-    --cat-outros: #57606B;
+    --cat-negocios: #97314B;
+    --cat-social: #8E3197;
+    --cat-profissional: #869731;
+    --cat-d: #6D4BB0;
+    --cat-aprendizagem: #349731;
+    --cat-neutral: #57606B;
 
     --shadow: 0 1px 2px rgba(35, 32, 25, 0.06), 0 8px 20px -12px rgba(35, 32, 25, 0.18);
     --radius: 10px;
@@ -47,8 +51,12 @@
       --cat-casa: #E08A5C;
       --cat-capoeira: #5FC7A3;
       --cat-financas: #6FA9DE;
-      --cat-phakite: #B69BEA;
-      --cat-outros: #9AA3AF;
+      --cat-negocios: #DD708B;
+      --cat-social: #D470DD;
+      --cat-profissional: #CBDD70;
+      --cat-d: #B69BEA;
+      --cat-aprendizagem: #74DD70;
+      --cat-neutral: #9AA3AF;
 
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
     }
@@ -69,8 +77,12 @@
     --cat-casa: #E08A5C;
     --cat-capoeira: #5FC7A3;
     --cat-financas: #6FA9DE;
-    --cat-phakite: #B69BEA;
-    --cat-outros: #9AA3AF;
+    --cat-negocios: #DD708B;
+    --cat-social: #D470DD;
+    --cat-profissional: #CBDD70;
+    --cat-d: #B69BEA;
+    --cat-aprendizagem: #74DD70;
+    --cat-neutral: #9AA3AF;
 
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
   }
@@ -194,59 +206,6 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-  }
-
-  .toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .chip-filter {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    border-radius: 999px;
-    padding: 6px 13px;
-    font-size: 0.84rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-
-  .chip-filter .count {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 0.78rem;
-    opacity: 0.75;
-  }
-
-  .chip-filter:hover { color: var(--text); }
-
-  .chip-filter[aria-pressed="true"] {
-    color: var(--text);
-    border-color: currentColor;
-    background: var(--surface-2);
-  }
-
-  .chip-filter[data-cat] { color: var(--dot-color, var(--text-dim)); }
-
-  .sort {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.84rem;
-    color: var(--text-dim);
   }
 
   select {
@@ -548,12 +507,269 @@
     border-radius: 8px;
     box-shadow: var(--shadow);
   }
+
+  .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .gear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 7px;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gear-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    min-height: 34px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.86rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb button {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    padding: 0;
+  }
+
+  .breadcrumb button:hover { color: var(--text); text-decoration: underline; }
+
+  .breadcrumb .crumb-current { color: var(--text); font-weight: 600; }
+
+  .breadcrumb .sep { opacity: 0.5; }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.86rem;
+    padding: 0;
+  }
+
+  .link-btn:hover { color: var(--text); text-decoration: underline; }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .nav-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-card { transition: transform 0.15s ease, border-color 0.15s ease; }
+    .nav-card:hover { transform: translateY(-2px); }
+  }
+
+  .nav-card:hover { border-color: color-mix(in srgb, var(--nav-color, var(--text-dim)) 55%, var(--border)); }
+
+  .nav-card .nav-card-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--nav-color, var(--text-dim));
+  }
+
+  .nav-card.uncategorized .nav-card-dot { border: 1px dashed var(--text-dim); background: transparent; }
+
+  .nav-card .nav-card-name {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .nav-card .nav-card-count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 20;
+  }
+
+  .modal-overlay[hidden] { display: none; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal h2 {
+    margin: 0;
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 1.25rem;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .icon-btn:hover { color: var(--text); background: var(--surface-2); }
+
+  .cat-manage-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-manage-group:last-child { border-bottom: none; }
+
+  .cat-manage-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cat-manage-row .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--nav-color, var(--text-dim));
+    flex: none;
+  }
+
+  .cat-manage-row .cat-manage-name {
+    flex: 1;
+    font-size: 0.95rem;
+  }
+
+  .cat-manage-sub-list {
+    margin-left: 21px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .inline-edit-input {
+    font: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 6px;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .add-sub-row {
+    display: flex;
+    gap: 6px;
+    margin-left: 21px;
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .add-row input {
+    flex: 1;
+    font: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: var(--text);
+    min-width: 0;
+  }
+
+  .subcat-select {
+    font-family: inherit;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 5px;
+    max-width: 108px;
+  }
 </style>
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
+      <div class="hero-top">
+        <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
+        <button type="button" class="gear-btn" id="manageCatsBtn" aria-label="Gerir categorias">⚙</button>
+      </div>
       <p class="tagline">Cola as ideias soltas que tiveste. Ele arruma-as por área da vida e mostra o que vale mais a pena.</p>
     </header>
 
@@ -575,15 +791,9 @@
       </div>
     </section>
 
-    <section class="toolbar">
-      <div class="chips" id="filterChips" role="group" aria-label="Filtrar por categoria"></div>
-      <div class="sort">
-        <label for="sortSelect">Ordenar</label>
-        <select id="sortSelect">
-          <option value="priority">Mais relevantes</option>
-          <option value="recent">Mais recentes</option>
-        </select>
-      </div>
+    <section class="nav-header">
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
+      <div class="nav-actions" id="navActions"></div>
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
@@ -597,11 +807,28 @@
     <img id="lightboxImg" alt="Imagem ampliada" />
   </div>
 
+  <div class="modal-overlay" id="catModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Gerir categorias">
+      <div class="modal-head">
+        <h2>Categorias</h2>
+        <button type="button" class="icon-btn" id="closeCatModalBtn" aria-label="Fechar">×</button>
+      </div>
+      <div id="catManageList"></div>
+      <form class="add-row" id="newCategoryForm">
+        <input type="text" id="newCategoryInput" placeholder="Nova categoria..." aria-label="Nome da nova categoria" />
+        <button type="submit" class="btn-attach">Adicionar</button>
+      </form>
+    </div>
+  </div>
+
 <script type="application/json" id="ideas-data">[]</script>
+<script type="application/json" id="categories-data">[]</script>
 <script>
 (function appMain() {
   "use strict";
+
   var STORAGE_KEY = "ucopo:ideas:v1";
+  var CATEGORIES_KEY = "ucopo:categories:v1";
 
   var DOC_HEAD = `<!doctype html>
 <html lang="pt">
@@ -629,8 +856,12 @@
     --cat-casa: #A0552A;
     --cat-capoeira: #297A5E;
     --cat-financas: #29628F;
-    --cat-phakite: #6D4BB0;
-    --cat-outros: #57606B;
+    --cat-negocios: #97314B;
+    --cat-social: #8E3197;
+    --cat-profissional: #869731;
+    --cat-d: #6D4BB0;
+    --cat-aprendizagem: #349731;
+    --cat-neutral: #57606B;
 
     --shadow: 0 1px 2px rgba(35, 32, 25, 0.06), 0 8px 20px -12px rgba(35, 32, 25, 0.18);
     --radius: 10px;
@@ -652,8 +883,12 @@
       --cat-casa: #E08A5C;
       --cat-capoeira: #5FC7A3;
       --cat-financas: #6FA9DE;
-      --cat-phakite: #B69BEA;
-      --cat-outros: #9AA3AF;
+      --cat-negocios: #DD708B;
+      --cat-social: #D470DD;
+      --cat-profissional: #CBDD70;
+      --cat-d: #B69BEA;
+      --cat-aprendizagem: #74DD70;
+      --cat-neutral: #9AA3AF;
 
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
     }
@@ -674,8 +909,12 @@
     --cat-casa: #E08A5C;
     --cat-capoeira: #5FC7A3;
     --cat-financas: #6FA9DE;
-    --cat-phakite: #B69BEA;
-    --cat-outros: #9AA3AF;
+    --cat-negocios: #DD708B;
+    --cat-social: #D470DD;
+    --cat-profissional: #CBDD70;
+    --cat-d: #B69BEA;
+    --cat-aprendizagem: #74DD70;
+    --cat-neutral: #9AA3AF;
 
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 24px -14px rgba(0, 0, 0, 0.55);
   }
@@ -799,59 +1038,6 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-  }
-
-  .toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .chip-filter {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    border-radius: 999px;
-    padding: 6px 13px;
-    font-size: 0.84rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-
-  .chip-filter .count {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 0.78rem;
-    opacity: 0.75;
-  }
-
-  .chip-filter:hover { color: var(--text); }
-
-  .chip-filter[aria-pressed="true"] {
-    color: var(--text);
-    border-color: currentColor;
-    background: var(--surface-2);
-  }
-
-  .chip-filter[data-cat] { color: var(--dot-color, var(--text-dim)); }
-
-  .sort {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.84rem;
-    color: var(--text-dim);
   }
 
   select {
@@ -1153,12 +1339,269 @@
     border-radius: 8px;
     box-shadow: var(--shadow);
   }
+
+  .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .gear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 7px;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gear-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    min-height: 34px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.86rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb button {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    padding: 0;
+  }
+
+  .breadcrumb button:hover { color: var(--text); text-decoration: underline; }
+
+  .breadcrumb .crumb-current { color: var(--text); font-weight: 600; }
+
+  .breadcrumb .sep { opacity: 0.5; }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.86rem;
+    padding: 0;
+  }
+
+  .link-btn:hover { color: var(--text); text-decoration: underline; }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .nav-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-card { transition: transform 0.15s ease, border-color 0.15s ease; }
+    .nav-card:hover { transform: translateY(-2px); }
+  }
+
+  .nav-card:hover { border-color: color-mix(in srgb, var(--nav-color, var(--text-dim)) 55%, var(--border)); }
+
+  .nav-card .nav-card-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--nav-color, var(--text-dim));
+  }
+
+  .nav-card.uncategorized .nav-card-dot { border: 1px dashed var(--text-dim); background: transparent; }
+
+  .nav-card .nav-card-name {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .nav-card .nav-card-count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 20;
+  }
+
+  .modal-overlay[hidden] { display: none; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal h2 {
+    margin: 0;
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 1.25rem;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .icon-btn:hover { color: var(--text); background: var(--surface-2); }
+
+  .cat-manage-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-manage-group:last-child { border-bottom: none; }
+
+  .cat-manage-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cat-manage-row .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--nav-color, var(--text-dim));
+    flex: none;
+  }
+
+  .cat-manage-row .cat-manage-name {
+    flex: 1;
+    font-size: 0.95rem;
+  }
+
+  .cat-manage-sub-list {
+    margin-left: 21px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .inline-edit-input {
+    font: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 6px;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .add-sub-row {
+    display: flex;
+    gap: 6px;
+    margin-left: 21px;
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .add-row input {
+    flex: 1;
+    font: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: var(--text);
+    min-width: 0;
+  }
+
+  .subcat-select {
+    font-family: inherit;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 5px;
+    max-width: 108px;
+  }
 </style>
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
+      <div class="hero-top">
+        <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
+        <button type="button" class="gear-btn" id="manageCatsBtn" aria-label="Gerir categorias">⚙</button>
+      </div>
       <p class="tagline">Cola as ideias soltas que tiveste. Ele arruma-as por área da vida e mostra o que vale mais a pena.</p>
     </header>
 
@@ -1180,15 +1623,9 @@
       </div>
     </section>
 
-    <section class="toolbar">
-      <div class="chips" id="filterChips" role="group" aria-label="Filtrar por categoria"></div>
-      <div class="sort">
-        <label for="sortSelect">Ordenar</label>
-        <select id="sortSelect">
-          <option value="priority">Mais relevantes</option>
-          <option value="recent">Mais recentes</option>
-        </select>
-      </div>
+    <section class="nav-header">
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
+      <div class="nav-actions" id="navActions"></div>
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
@@ -1202,32 +1639,21 @@
     <img id="lightboxImg" alt="Imagem ampliada" />
   </div>
 
+  <div class="modal-overlay" id="catModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Gerir categorias">
+      <div class="modal-head">
+        <h2>Categorias</h2>
+        <button type="button" class="icon-btn" id="closeCatModalBtn" aria-label="Fechar">×</button>
+      </div>
+      <div id="catManageList"></div>
+      <form class="add-row" id="newCategoryForm">
+        <input type="text" id="newCategoryInput" placeholder="Nova categoria..." aria-label="Nome da nova categoria" />
+        <button type="submit" class="btn-attach">Adicionar</button>
+      </form>
+    </div>
+  </div>
+
 `;
-
-  var CATEGORIES = [
-    { id: "casa", label: "Casa", group: "Vida", color: "var(--cat-casa)",
-      keywords: ["casa","cozinha","quarto","sala","banheiro","wc","jardim","quintal","limpeza","limpar","arrumar","arrumacao","organizar a casa","moveis","mobilia","reforma","pintura","decoracao","decorar","eletrodomestico","manutencao","horta","lavanderia","garagem","renda da casa","obras"] },
-    { id: "capoeira", label: "Capoeira", group: "Vida", color: "var(--cat-capoeira)",
-      keywords: ["capoeira","roda","berimbau","ginga","mestre","corda","batizado","treino","aula de capoeira","atabaque","pandeiro","movimento corporal","acrobacia","roda de capoeira","grupo de capoeira","malicia","jogo de capoeira","apresentacao de capoeira"] },
-    { id: "financas", label: "Finanças", group: "Vida", color: "var(--cat-financas)",
-      keywords: ["dinheiro","financas","financeiro","investir","investimento","poupanca","poupar","orcamento","divida","dividas","banco","acoes","cripto","criptomoeda","salario","gasto","gastos","renda extra","imposto","fatura","cartao de credito","emprestimo","economizar","economia domestica"] },
-    { id: "phakite", label: "Phakite", group: "Projetos", color: "var(--cat-phakite)",
-      keywords: ["phakite"] },
-    { id: "outros", label: "Outros", group: "Projetos", color: "var(--cat-outros)",
-      keywords: [] }
-  ];
-
-  var CAT_BY_ID = {};
-  CATEGORIES.forEach(function (c) { CAT_BY_ID[c.id] = c; });
-
-  var AXES = [
-    { id: "bemEstar", label: "Bem-estar",
-      keywords: ["saude","bem-estar","bem estar","relaxar","descanso","descansar","dormir","meditar","meditacao","familia","amigos","feliz","felicidade","alegria","exercicio","exercitar","correr","alongamento","ar livre","natureza","viagem","ferias","lazer","hobby","tempo livre","autocuidado","terapia"] },
-    { id: "dinheiro", label: "Dinheiro",
-      keywords: ["vender","venda","lucro","lucrativo","renda extra","renda","cliente","clientes","negocio","negocios","investir","investimento","ganhar dinheiro","faturar","faturamento","preco","precificar","monetizar","assinatura","produto pago","servico pago","comissao","patrocinio","parceria paga","orcamento","previs"] },
-    { id: "tempo", label: "Tempo",
-      keywords: ["automatizar","automatizacao","automatico","rapido","rapida","eficiente","eficiencia","produtividade","produtivo","organizar","organizacao","simplificar","otimizar","otimizacao","agilizar","atalho","template","modelo pronto","checklist","rotina","agenda","planejamento","delegar"] }
-  ];
 
   function normalize(str) {
     return str
@@ -1244,23 +1670,134 @@
     return hits;
   }
 
+  function slugify(label) {
+    var s = normalize(label).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return s || "cat";
+  }
+
+  function uniqueId(base, existingIds) {
+    var id = base;
+    var n = 2;
+    while (existingIds.indexOf(id) !== -1) {
+      id = base + "-" + n;
+      n++;
+    }
+    return id;
+  }
+
+  // --- Categories (user-editable, persisted like ideas) ------------------
+
+  function defaultCategories() {
+    return [
+      { id: "casa", label: "Casa", color: "var(--cat-casa)", subcategories: [] },
+      { id: "capoeira", label: "Capoeira", color: "var(--cat-capoeira)", subcategories: [] },
+      { id: "financas", label: "Finanças", color: "var(--cat-financas)", subcategories: [] },
+      { id: "negocios", label: "Negócios e Investimentos", color: "var(--cat-negocios)", subcategories: [] },
+      { id: "social", label: "Social", color: "var(--cat-social)", subcategories: [] },
+      { id: "profissional", label: "Profissional", color: "var(--cat-profissional)", subcategories: [] },
+      { id: "d_", label: "D_", color: "var(--cat-d)", subcategories: [
+        { id: "phakite-base44", label: "Phakite Base44" },
+        { id: "phakite-claude-code", label: "Phakite Claude Code" },
+        { id: "mtchovelo", label: "M'tchovelo" },
+        { id: "hub-integrado", label: "Hub Integrado" }
+      ] },
+      { id: "aprendizagem", label: "Aprendizagem", color: "var(--cat-aprendizagem)", subcategories: [
+        { id: "youtube", label: "YouTube" },
+        { id: "leitura", label: "Leitura" },
+        { id: "mestrado", label: "Mestrado" }
+      ] }
+    ];
+  }
+
+  function loadInitialCategories() {
+    try {
+      var tag = document.getElementById("categories-data");
+      if (tag) {
+        var fromDoc = JSON.parse(tag.textContent || "[]");
+        if (fromDoc.length) return fromDoc;
+      }
+    } catch (e) { /* fall through */ }
+    try {
+      var raw = localStorage.getItem(CATEGORIES_KEY);
+      if (raw) {
+        var fromStorage = JSON.parse(raw);
+        if (fromStorage.length) return fromStorage;
+      }
+    } catch (e) { /* fall through */ }
+    return defaultCategories();
+  }
+
+  function findCategory(id) {
+    for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
+    return null;
+  }
+
+  function findSubcategory(categoryId, subcategoryId) {
+    var cat = findCategory(categoryId);
+    if (!cat || !subcategoryId) return null;
+    for (var i = 0; i < cat.subcategories.length; i++) {
+      if (cat.subcategories[i].id === subcategoryId) return cat.subcategories[i];
+    }
+    return null;
+  }
+
+  // --- Relevance axes ------------------------------------------------------
+
+  var AXES = [
+    { id: "bemEstar", label: "Bem-estar",
+      keywords: ["saude","bem-estar","bem estar","relaxar","descanso","descansar","dormir","meditar","meditacao","familia","amigos","feliz","felicidade","alegria","exercicio","exercitar","correr","alongamento","ar livre","natureza","viagem","ferias","lazer","hobby","tempo livre","autocuidado","terapia"] },
+    { id: "dinheiro", label: "Dinheiro",
+      keywords: ["vender","venda","lucro","lucrativo","renda extra","renda","cliente","clientes","negocio","negocios","investir","investimento","ganhar dinheiro","faturar","faturamento","preco","precificar","monetizar","assinatura","produto pago","servico pago","comissao","patrocinio","parceria paga","orcamento","previs"] },
+    { id: "tempo", label: "Tempo",
+      keywords: ["automatizar","automatizacao","automatico","rapido","rapida","eficiente","eficiencia","produtividade","produtivo","organizar","organizacao","simplificar","otimizar","otimizacao","agilizar","atalho","template","modelo pronto","checklist","rotina","agenda","planejamento","delegar"] }
+  ];
+
+  // --- Classification --------------------------------------------------
+
+  // Specific enough to name a subcategory outright, checked before the
+  // broader per-category keyword competition below — a named project (e.g.
+  // "base44") outranks generic words picked up in the same idea.
+  var STRONG_SIGNALS = [
+    { categoryId: "d_", subcategoryId: "phakite-base44", keywords: ["base44", "base 44"] },
+    { categoryId: "d_", subcategoryId: "phakite-claude-code", keywords: ["claude code"] },
+    { categoryId: "d_", subcategoryId: "mtchovelo", keywords: ["mtchovelo", "m'tchovelo", "m tchovelo"] },
+    { categoryId: "d_", subcategoryId: "hub-integrado", keywords: ["hub integrado"] },
+    { categoryId: "aprendizagem", subcategoryId: "youtube", keywords: ["youtube"] },
+    { categoryId: "aprendizagem", subcategoryId: "mestrado", keywords: ["mestrado", "tese", "dissertacao"] },
+    { categoryId: "d_", subcategoryId: null, keywords: ["phakite"] }
+  ];
+
+  var CATEGORY_KEYWORDS = {
+    casa: ["casa","cozinha","quarto","sala","banheiro","wc","jardim","quintal","limpeza","limpar","arrumar","arrumacao","organizar a casa","moveis","mobilia","reforma","pintura","decoracao","decorar","eletrodomestico","manutencao","horta","lavanderia","garagem","renda da casa","obras"],
+    capoeira: ["capoeira","roda","berimbau","ginga","mestre","corda","batizado","treino","aula de capoeira","atabaque","pandeiro","movimento corporal","acrobacia","roda de capoeira","grupo de capoeira","malicia","jogo de capoeira","apresentacao de capoeira"],
+    financas: ["dinheiro","financas","financeiro","poupanca","poupar","orcamento","previs","divida","dividas","banco","salario","gasto","gastos","imposto","fatura","cartao de credito","emprestimo","economizar","economia domestica","conta bancaria"],
+    negocios: ["negocio","negocios","empresa","empreender","empreendedorismo","investir","investimento","acoes","cripto","criptomoeda","startup","cliente","clientes","vender","venda","lucro","lucrativo","renda extra","faturar","faturamento","socio","parceria","mercado","concorrencia","plano de negocio"],
+    social: ["amigos","familia","festa","encontro","convivio","sair com","jantar","reuniao social","casamento","aniversario","socializar","rede social","comunidade","visita"],
+    profissional: ["trabalho","emprego","carreira","curriculo","entrevista","chefe","colega","reuniao de trabalho","promocao","escritorio","projeto profissional","networking profissional"],
+    aprendizagem: ["aprender","aprendizagem","estudar","estudo","curso","formacao","leitura","livro","ebook"]
+  };
+
   function classify(text) {
     var norm = normalize(text);
 
-    // A named project (e.g. "phakite") is a deliberate, unambiguous signal
-    // that outranks generic life-area keywords picked up in the same idea.
-    var categoryId = null;
-    if (norm.indexOf("phakite") !== -1) {
-      categoryId = "phakite";
-    } else {
-      var bestHits = 0;
-      ["casa", "capoeira", "financas"].forEach(function (id) {
-        var hits = countHits(norm, CAT_BY_ID[id].keywords);
-        if (hits > bestHits) { bestHits = hits; categoryId = id; }
-      });
+    for (var i = 0; i < STRONG_SIGNALS.length; i++) {
+      var signal = STRONG_SIGNALS[i];
+      if (countHits(norm, signal.keywords) > 0) {
+        return finishClassify(norm, signal.categoryId, signal.subcategoryId);
+      }
     }
-    if (!categoryId) categoryId = "outros";
 
+    var bestId = null;
+    var bestHits = 0;
+    Object.keys(CATEGORY_KEYWORDS).forEach(function (id) {
+      var hits = countHits(norm, CATEGORY_KEYWORDS[id]);
+      if (hits > bestHits) { bestHits = hits; bestId = id; }
+    });
+
+    return finishClassify(norm, bestId, null);
+  }
+
+  function finishClassify(norm, categoryId, subcategoryId) {
     var scores = {};
     var axesHit = 0;
     AXES.forEach(function (axis) {
@@ -1273,7 +1810,7 @@
     if (axesHit >= 2) priority = "alta";
     else if (axesHit === 1) priority = "media";
 
-    return { categoryId: categoryId, scores: scores, priority: priority };
+    return { categoryId: categoryId, subcategoryId: subcategoryId, scores: scores, priority: priority };
   }
 
   function uid() {
@@ -1292,13 +1829,32 @@
     return "há " + days + "d";
   }
 
-  // Where the data lives: this artifact publishes itself (see persist/
-  // buildFullDocument below) when the "artifact" capability is granted, so
-  // ideas are stored with the artifact and follow the same link across
-  // browsers/devices. Opened as a plain file (e.g. from the repo) there is
-  // no such capability, and it falls back to this browser's localStorage,
-  // exactly like before.
-  var artifactCap = null;
+  // --- Loading + migrating existing data ---------------------------------
+
+  // Old flat taxonomy (casa/capoeira/financas/phakite/outros) -> the new
+  // category+subcategory shape. "outros" has no obvious match, so it becomes
+  // uncategorized ("por categorizar") rather than guessed at.
+  var OLD_CATEGORY_MAP = {
+    casa: { categoryId: "casa", subcategoryId: null },
+    capoeira: { categoryId: "capoeira", subcategoryId: null },
+    financas: { categoryId: "financas", subcategoryId: null },
+    phakite: { categoryId: "d_", subcategoryId: null },
+    outros: { categoryId: null, subcategoryId: null }
+  };
+
+  function migrateIdea(idea) {
+    if (Object.prototype.hasOwnProperty.call(idea, "subcategoryId")) return idea;
+    var mapped = OLD_CATEGORY_MAP[idea.categoryId] || { categoryId: null, subcategoryId: null };
+    var patched = {};
+    for (var k in idea) if (Object.prototype.hasOwnProperty.call(idea, k)) patched[k] = idea[k];
+    patched.categoryId = mapped.categoryId;
+    patched.subcategoryId = mapped.subcategoryId;
+    if (patched.categoryId === "d_" && !patched.subcategoryId) {
+      var reclass = classify(idea.text || "");
+      if (reclass.categoryId === "d_" && reclass.subcategoryId) patched.subcategoryId = reclass.subcategoryId;
+    }
+    return patched;
+  }
 
   function loadInitialIdeas() {
     var fromDoc = [];
@@ -1306,58 +1862,18 @@
       var tag = document.getElementById("ideas-data");
       if (tag) fromDoc = JSON.parse(tag.textContent || "[]");
     } catch (e) { fromDoc = []; }
-    if (fromDoc.length) return fromDoc;
-    // First run of a sync-capable copy in a browser that already had ideas
-    // saved locally under the old localStorage-only build: seed from those
-    // instead of starting empty. They reach the shared copy on the next
-    // action (persist() always writes both places).
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
+    if (!fromDoc.length) {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        fromDoc = raw ? JSON.parse(raw) : [];
+      } catch (e) { fromDoc = []; }
     }
+    return fromDoc.map(migrateIdea);
   }
 
-  function buildFullDocument() {
-    var json = JSON.stringify(ideas).replace(/</g, "\u003c");
-    return DOC_HEAD +
-      '<script type="application/json" id="ideas-data">' + json + '<\/script>\n' +
-      '<script>\n(' + appMain.toString() + ')();\n<\/script>\n</body>\n</html>';
-  }
+  // --- Images (unchanged: downscaled client-side, stored as data URIs on
+  // the idea itself, so they ride along with the same persist() path) -----
 
-  function persist() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
-    } catch (e) { /* storage unavailable, ideas stay in memory for this render */ }
-    if (artifactCap) {
-      artifactCap.publish(buildFullDocument()).catch(function (err) {
-        // "conflict": the platform is already reloading every view to the
-        // winning version. "too_large": likely too many/too big images —
-        // this browser's localStorage write above still stands, just say
-        // so. Anything else: same fallback, silently.
-        if (err && err.code === "too_large") updateSyncNote("too_large");
-      });
-    }
-  }
-
-  function updateSyncNote(warning) {
-    var note = document.getElementById("syncNote");
-    if (!note) return;
-    if (warning === "too_large") {
-      note.textContent = "Não sincronizou desta vez (fica grande demais com as imagens) — guardado só neste navegador.";
-      return;
-    }
-    note.textContent = artifactCap
-      ? "As tuas ideias estão sincronizadas com este artifact — abre o mesmo link em qualquer dispositivo para as veres."
-      : "As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.";
-  }
-
-  // Images are downscaled client-side and kept as data URIs on the idea
-  // itself (idea.image), so they ride along with the same persist() path as
-  // the text — no extra capability needed. Keeping them modest in size
-  // matters here: both localStorage and a published artifact reject a
-  // document past a size limit.
   var MAX_IMAGE_DIM = 1600;
 
   function downscaleImage(file, callback) {
@@ -1381,13 +1897,23 @@
     reader.readAsDataURL(file);
   }
 
+  // --- State ---------------------------------------------------------------
+
+  var artifactCap = null;
+  var categories = loadInitialCategories();
   var ideas = loadInitialIdeas();
-  var activeFilter = "all";
   var pendingImage = null;
+  var sortOrder = "priority";
+  // { kind: "categories" }
+  // { kind: "subcategories", categoryId }
+  // { kind: "ideas", scope: {type:"all"} | {type:"uncategorized"} |
+  //   {type:"category", categoryId} | {type:"subcategory", categoryId, subcategoryId} |
+  //   {type:"subcategory-none", categoryId} }
+  var view = { kind: "categories" };
 
   var boardEl = document.getElementById("board");
-  var chipsEl = document.getElementById("filterChips");
-  var sortEl = document.getElementById("sortSelect");
+  var breadcrumbEl = document.getElementById("breadcrumb");
+  var navActionsEl = document.getElementById("navActions");
   var inputEl = document.getElementById("ideaInput");
   var submitBtn = document.getElementById("submitBtn");
   var attachBtn = document.getElementById("attachBtn");
@@ -1397,6 +1923,48 @@
   var removePendingBtn = document.getElementById("removePendingBtn");
   var lightboxEl = document.getElementById("lightbox");
   var lightboxImgEl = document.getElementById("lightboxImg");
+  var manageCatsBtn = document.getElementById("manageCatsBtn");
+  var catModalOverlay = document.getElementById("catModalOverlay");
+  var closeCatModalBtn = document.getElementById("closeCatModalBtn");
+  var catManageListEl = document.getElementById("catManageList");
+  var newCategoryForm = document.getElementById("newCategoryForm");
+  var newCategoryInput = document.getElementById("newCategoryInput");
+
+  function buildFullDocument() {
+    var ideasJson = JSON.stringify(ideas).replace(/</g, "\u003c");
+    var catsJson = JSON.stringify(categories).replace(/</g, "\u003c");
+    return DOC_HEAD +
+      '<script type="application/json" id="ideas-data">' + ideasJson + '<\/script>\n' +
+      '<script type="application/json" id="categories-data">' + catsJson + '<\/script>\n' +
+      '<script>\n(' + appMain.toString() + ')();\n<\/script>\n</body>\n</html>';
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+    } catch (e) { /* storage unavailable, state stays in memory for this render */ }
+    if (artifactCap) {
+      artifactCap.publish(buildFullDocument()).catch(function (err) {
+        // "conflict": the platform is already reloading every view to the
+        // winning version. "too_large": say so — this browser's localStorage
+        // write above still stands. Anything else: same fallback, silently.
+        if (err && err.code === "too_large") updateSyncNote("too_large");
+      });
+    }
+  }
+
+  function updateSyncNote(warning) {
+    var note = document.getElementById("syncNote");
+    if (!note) return;
+    if (warning === "too_large") {
+      note.textContent = "Não sincronizou desta vez (fica grande demais com as imagens) — guardado só neste navegador.";
+      return;
+    }
+    note.textContent = artifactCap
+      ? "As tuas ideias estão sincronizadas com este artifact — abre o mesmo link em qualquer dispositivo para as veres."
+      : "As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.";
+  }
 
   function setPendingImage(dataUrl) {
     pendingImage = dataUrl;
@@ -1444,6 +2012,7 @@
         id: uid(),
         text: line,
         categoryId: result.categoryId,
+        subcategoryId: result.subcategoryId,
         scores: result.scores,
         priority: result.priority,
         createdAt: Date.now(),
@@ -1472,35 +2041,190 @@
     }
   });
 
-  sortEl.addEventListener("change", render);
-
   function priorityRank(p) {
     return p === "alta" ? 2 : p === "media" ? 1 : 0;
   }
 
-  function renderChips() {
-    chipsEl.innerHTML = "";
-    var allCount = ideas.length;
-    chipsEl.appendChild(makeChip("all", "Todas", allCount, null));
-    CATEGORIES.forEach(function (cat) {
-      var count = ideas.filter(function (i) { return i.categoryId === cat.id; }).length;
-      chipsEl.appendChild(makeChip(cat.id, cat.label, count, cat.color));
-    });
+  // --- Navigation ------------------------------------------------------
+
+  function goToCategories() { view = { kind: "categories" }; render(); }
+  function goToSubcategories(categoryId) { view = { kind: "subcategories", categoryId: categoryId }; render(); }
+  function goToIdeas(scope) { view = { kind: "ideas", scope: scope }; render(); }
+
+  function ideasForScope(scope) {
+    switch (scope.type) {
+      case "all": return ideas.slice();
+      case "uncategorized": return ideas.filter(function (i) { return !i.categoryId; });
+      case "category": return ideas.filter(function (i) { return i.categoryId === scope.categoryId; });
+      case "subcategory": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && i.subcategoryId === scope.subcategoryId; });
+      case "subcategory-none": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && !i.subcategoryId; });
+      default: return [];
+    }
   }
 
-  function makeChip(id, label, count, color) {
+  function crumbLink(label, onClick) {
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "chip-filter";
-    btn.dataset.cat = id;
-    btn.setAttribute("aria-pressed", String(activeFilter === id));
-    if (color) btn.style.setProperty("--dot-color", color);
-    btn.innerHTML = label + ' <span class="count">' + count + "</span>";
-    btn.addEventListener("click", function () {
-      activeFilter = id;
-      render();
-    });
+    btn.textContent = label;
+    btn.addEventListener("click", onClick);
     return btn;
+  }
+
+  function crumbCurrent(label) {
+    var span = document.createElement("span");
+    span.className = "crumb-current";
+    span.textContent = label;
+    return span;
+  }
+
+  function crumbSep() {
+    var span = document.createElement("span");
+    span.className = "sep";
+    span.textContent = "›";
+    return span;
+  }
+
+  function renderBreadcrumb() {
+    breadcrumbEl.innerHTML = "";
+    if (view.kind === "categories") return;
+
+    breadcrumbEl.appendChild(crumbLink("Categorias", goToCategories));
+
+    if (view.kind === "subcategories") {
+      var cat = findCategory(view.categoryId);
+      breadcrumbEl.appendChild(crumbSep());
+      breadcrumbEl.appendChild(crumbCurrent(cat ? cat.label : ""));
+      return;
+    }
+
+    var scope = view.scope;
+    if (scope.type === "all") {
+      breadcrumbEl.appendChild(crumbSep());
+      breadcrumbEl.appendChild(crumbCurrent("Todas"));
+    } else if (scope.type === "uncategorized") {
+      breadcrumbEl.appendChild(crumbSep());
+      breadcrumbEl.appendChild(crumbCurrent("Por categorizar"));
+    } else {
+      var cat2 = findCategory(scope.categoryId);
+      var catLabel = cat2 ? cat2.label : "";
+      var hasSubs = cat2 && cat2.subcategories.length > 0;
+      breadcrumbEl.appendChild(crumbSep());
+      if (hasSubs) {
+        breadcrumbEl.appendChild(crumbLink(catLabel, function () { goToSubcategories(scope.categoryId); }));
+        breadcrumbEl.appendChild(crumbSep());
+        var subLabel = scope.type === "subcategory-none"
+          ? "Sem subcategoria"
+          : ((findSubcategory(scope.categoryId, scope.subcategoryId) || {}).label || "");
+        breadcrumbEl.appendChild(crumbCurrent(subLabel));
+      } else {
+        breadcrumbEl.appendChild(crumbCurrent(catLabel));
+      }
+    }
+  }
+
+  function linkBtn(label, onClick) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "link-btn";
+    btn.textContent = label;
+    btn.addEventListener("click", onClick);
+    return btn;
+  }
+
+  function renderNavActions() {
+    navActionsEl.innerHTML = "";
+    if (view.kind === "categories") {
+      navActionsEl.appendChild(linkBtn("Ver todas as ideias →", function () { goToIdeas({ type: "all" }); }));
+    } else if (view.kind === "ideas") {
+      var select = document.createElement("select");
+      select.setAttribute("aria-label", "Ordenar");
+      var optPriority = document.createElement("option");
+      optPriority.value = "priority";
+      optPriority.textContent = "Mais relevantes";
+      var optRecent = document.createElement("option");
+      optRecent.value = "recent";
+      optRecent.textContent = "Mais recentes";
+      select.appendChild(optPriority);
+      select.appendChild(optRecent);
+      select.value = sortOrder;
+      select.addEventListener("change", function () { sortOrder = select.value; renderBoard(); });
+      navActionsEl.appendChild(select);
+    }
+  }
+
+  function emptyState(text) {
+    var div = document.createElement("div");
+    div.className = "empty-state";
+    div.textContent = text;
+    return div;
+  }
+
+  function makeNavCard(label, count, color, onClick) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "nav-card";
+    if (color) btn.style.setProperty("--nav-color", color);
+    var dot = document.createElement("span");
+    dot.className = "nav-card-dot";
+    var name = document.createElement("span");
+    name.className = "nav-card-name";
+    name.textContent = label;
+    var countEl = document.createElement("span");
+    countEl.className = "nav-card-count";
+    countEl.textContent = count + (count === 1 ? " ideia" : " ideias");
+    btn.appendChild(dot);
+    btn.appendChild(name);
+    btn.appendChild(countEl);
+    btn.addEventListener("click", onClick);
+    return btn;
+  }
+
+  function renderCategoriesGrid() {
+    categories.forEach(function (cat) {
+      var count = ideas.filter(function (i) { return i.categoryId === cat.id; }).length;
+      var card = makeNavCard(cat.label, count, cat.color, function () {
+        if (cat.subcategories.length) goToSubcategories(cat.id);
+        else goToIdeas({ type: "category", categoryId: cat.id });
+      });
+      boardEl.appendChild(card);
+    });
+    var uncatCount = ideas.filter(function (i) { return !i.categoryId; }).length;
+    if (uncatCount > 0) {
+      var uncatCard = makeNavCard("Por categorizar", uncatCount, null, function () {
+        goToIdeas({ type: "uncategorized" });
+      });
+      uncatCard.classList.add("uncategorized");
+      boardEl.appendChild(uncatCard);
+    }
+    if (!categories.length && uncatCount === 0) boardEl.appendChild(emptyState("Ainda sem categorias nem ideias."));
+  }
+
+  function renderSubcategoriesGrid(categoryId) {
+    var cat = findCategory(categoryId);
+    if (!cat) { goToCategories(); return; }
+    cat.subcategories.forEach(function (sub) {
+      var count = ideas.filter(function (i) { return i.categoryId === cat.id && i.subcategoryId === sub.id; }).length;
+      var card = makeNavCard(sub.label, count, cat.color, function () {
+        goToIdeas({ type: "subcategory", categoryId: cat.id, subcategoryId: sub.id });
+      });
+      boardEl.appendChild(card);
+    });
+    var noneCount = ideas.filter(function (i) { return i.categoryId === cat.id && !i.subcategoryId; }).length;
+    if (noneCount > 0) {
+      var noneCard = makeNavCard("Sem subcategoria", noneCount, cat.color, function () {
+        goToIdeas({ type: "subcategory-none", categoryId: cat.id });
+      });
+      noneCard.classList.add("uncategorized");
+      boardEl.appendChild(noneCard);
+    }
+    if (!cat.subcategories.length && noneCount === 0) boardEl.appendChild(emptyState("Sem subcategorias ainda."));
+  }
+
+  function categoryChip(idea) {
+    var cat = findCategory(idea.categoryId);
+    if (!cat) return { color: "var(--cat-neutral)", label: "Por categorizar" };
+    var sub = findSubcategory(idea.categoryId, idea.subcategoryId);
+    return { color: cat.color, label: sub ? cat.label + " · " + sub.label : cat.label };
   }
 
   function renderAxisRow(axis, value) {
@@ -1522,28 +2246,68 @@
   }
 
   function renderCategorySelect(idea) {
-    var select = document.createElement("select");
-    select.className = "reclass";
-    select.setAttribute("aria-label", "Reclassificar ideia");
-    var groups = {};
-    CATEGORIES.forEach(function (cat) {
-      if (!groups[cat.group]) groups[cat.group] = document.createElement("optgroup");
-      groups[cat.group].label = cat.group;
-    });
-    Object.keys(groups).forEach(function (g) { select.appendChild(groups[g]); });
-    CATEGORIES.forEach(function (cat) {
+    var wrap = document.createElement("div");
+    wrap.className = "reclass-group";
+
+    var catSelect = document.createElement("select");
+    catSelect.className = "reclass";
+    catSelect.setAttribute("aria-label", "Categoria");
+    var noneOpt = document.createElement("option");
+    noneOpt.value = "";
+    noneOpt.textContent = "Por categorizar";
+    if (!idea.categoryId) noneOpt.selected = true;
+    catSelect.appendChild(noneOpt);
+    categories.forEach(function (cat) {
       var opt = document.createElement("option");
       opt.value = cat.id;
       opt.textContent = cat.label;
       if (cat.id === idea.categoryId) opt.selected = true;
-      groups[cat.group].appendChild(opt);
+      catSelect.appendChild(opt);
     });
-    select.addEventListener("change", function () {
-      idea.categoryId = select.value;
+
+    var subSelect = document.createElement("select");
+    subSelect.className = "subcat-select";
+    subSelect.setAttribute("aria-label", "Subcategoria");
+
+    function populateSub(categoryId, selectedSubId) {
+      subSelect.innerHTML = "";
+      var cat = findCategory(categoryId);
+      var subs = cat ? cat.subcategories : [];
+      if (!subs.length) { subSelect.hidden = true; return; }
+      subSelect.hidden = false;
+      var empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = "— sem subcategoria —";
+      if (!selectedSubId) empty.selected = true;
+      subSelect.appendChild(empty);
+      subs.forEach(function (sub) {
+        var opt = document.createElement("option");
+        opt.value = sub.id;
+        opt.textContent = sub.label;
+        if (sub.id === selectedSubId) opt.selected = true;
+        subSelect.appendChild(opt);
+      });
+    }
+
+    populateSub(idea.categoryId, idea.subcategoryId);
+
+    catSelect.addEventListener("change", function () {
+      idea.categoryId = catSelect.value || null;
+      idea.subcategoryId = null;
+      populateSub(idea.categoryId, null);
       persist();
       render();
     });
-    return select;
+
+    subSelect.addEventListener("change", function () {
+      idea.subcategoryId = subSelect.value || null;
+      persist();
+      render();
+    });
+
+    wrap.appendChild(catSelect);
+    wrap.appendChild(subSelect);
+    return wrap;
   }
 
   function renderIdeaImage(idea) {
@@ -1594,14 +2358,20 @@
   }
 
   function renderCard(idea) {
-    var cat = CAT_BY_ID[idea.categoryId] || CAT_BY_ID.outros;
+    var chip = categoryChip(idea);
     var card = document.createElement("article");
     card.className = "card";
-    card.style.setProperty("--cat-color", cat.color);
+    card.style.setProperty("--cat-color", chip.color);
 
     var top = document.createElement("div");
     top.className = "card-top";
-    top.innerHTML = '<span class="cat-chip"><span class="dot"></span>' + cat.label + "</span>";
+    var chipEl = document.createElement("span");
+    chipEl.className = "cat-chip";
+    var chipDot = document.createElement("span");
+    chipDot.className = "dot";
+    chipEl.appendChild(chipDot);
+    chipEl.appendChild(document.createTextNode(chip.label));
+    top.appendChild(chipEl);
 
     var del = document.createElement("button");
     del.className = "delete-btn";
@@ -1646,14 +2416,9 @@
     return card;
   }
 
-  function render() {
-    renderChips();
-
-    var filtered = activeFilter === "all"
-      ? ideas.slice()
-      : ideas.filter(function (i) { return i.categoryId === activeFilter; });
-
-    if (sortEl.value === "priority") {
+  function renderIdeasGrid(list) {
+    var filtered = list.slice();
+    if (sortOrder === "priority") {
       filtered.sort(function (a, b) {
         var diff = priorityRank(b.priority) - priorityRank(a.priority);
         return diff !== 0 ? diff : b.createdAt - a.createdAt;
@@ -1661,19 +2426,165 @@
     } else {
       filtered.sort(function (a, b) { return b.createdAt - a.createdAt; });
     }
-
-    boardEl.innerHTML = "";
     if (!filtered.length) {
-      var empty = document.createElement("div");
-      empty.className = "empty-state";
-      empty.textContent = ideas.length
-        ? "Sem ideias nesta categoria."
-        : "Ainda sem ideias. Cola a primeira ali em cima.";
-      boardEl.appendChild(empty);
+      boardEl.appendChild(emptyState(ideas.length ? "Sem ideias aqui." : "Ainda sem ideias. Cola a primeira ali em cima."));
       return;
     }
     filtered.forEach(function (idea) { boardEl.appendChild(renderCard(idea)); });
   }
+
+  function renderBoard() {
+    boardEl.innerHTML = "";
+    if (view.kind === "categories") {
+      boardEl.className = "board nav-grid";
+      renderCategoriesGrid();
+    } else if (view.kind === "subcategories") {
+      boardEl.className = "board nav-grid";
+      renderSubcategoriesGrid(view.categoryId);
+    } else {
+      boardEl.className = "board";
+      renderIdeasGrid(ideasForScope(view.scope));
+    }
+  }
+
+  function render() {
+    renderBreadcrumb();
+    renderNavActions();
+    renderBoard();
+  }
+
+  // --- Category management modal -----------------------------------------
+
+  function openCatModal() {
+    renderCatManageList();
+    catModalOverlay.hidden = false;
+  }
+
+  function closeCatModal() {
+    catModalOverlay.hidden = true;
+  }
+
+  manageCatsBtn.addEventListener("click", openCatModal);
+  closeCatModalBtn.addEventListener("click", closeCatModal);
+  catModalOverlay.addEventListener("click", function (e) {
+    if (e.target === catModalOverlay) closeCatModal();
+  });
+
+  function renderManageRow(label, color, onRename) {
+    var row = document.createElement("div");
+    row.className = "cat-manage-row";
+    var dot = document.createElement("span");
+    dot.className = "dot";
+    dot.style.setProperty("--nav-color", color || "var(--cat-neutral)");
+    var nameSpan = document.createElement("span");
+    nameSpan.className = "cat-manage-name";
+    nameSpan.textContent = label;
+    var editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "icon-btn";
+    editBtn.setAttribute("aria-label", "Renomear " + label);
+    editBtn.textContent = "✎";
+
+    editBtn.addEventListener("click", function () {
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "inline-edit-input";
+      input.value = label;
+      row.replaceChild(input, nameSpan);
+      row.removeChild(editBtn);
+      input.focus();
+      input.select();
+      var committed = false;
+      function commit() {
+        if (committed) return;
+        committed = true;
+        var newLabel = input.value.trim() || label;
+        onRename(newLabel);
+      }
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); commit(); }
+        if (e.key === "Escape") { committed = true; renderCatManageList(); }
+      });
+      input.addEventListener("blur", commit);
+    });
+
+    row.appendChild(dot);
+    row.appendChild(nameSpan);
+    row.appendChild(editBtn);
+    return row;
+  }
+
+  function renderCatManageGroup(cat) {
+    var group = document.createElement("div");
+    group.className = "cat-manage-group";
+
+    group.appendChild(renderManageRow(cat.label, cat.color, function (newLabel) {
+      cat.label = newLabel;
+      persist();
+      renderCatManageList();
+      render();
+    }));
+
+    var subList = document.createElement("div");
+    subList.className = "cat-manage-sub-list";
+    cat.subcategories.forEach(function (sub) {
+      subList.appendChild(renderManageRow(sub.label, cat.color, function (newLabel) {
+        sub.label = newLabel;
+        persist();
+        renderCatManageList();
+        render();
+      }));
+    });
+    group.appendChild(subList);
+
+    var addSubRow = document.createElement("form");
+    addSubRow.className = "add-sub-row";
+    var addSubInput = document.createElement("input");
+    addSubInput.type = "text";
+    addSubInput.placeholder = "Nova subcategoria...";
+    addSubInput.setAttribute("aria-label", "Nome da nova subcategoria de " + cat.label);
+    var addSubBtn = document.createElement("button");
+    addSubBtn.type = "submit";
+    addSubBtn.className = "icon-btn";
+    addSubBtn.textContent = "+ subcategoria";
+    addSubRow.appendChild(addSubInput);
+    addSubRow.appendChild(addSubBtn);
+    addSubRow.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var label = addSubInput.value.trim();
+      if (!label) return;
+      var existingIds = cat.subcategories.map(function (s) { return s.id; });
+      var id = uniqueId(slugify(label), existingIds);
+      cat.subcategories.push({ id: id, label: label });
+      addSubInput.value = "";
+      persist();
+      renderCatManageList();
+      render();
+    });
+    group.appendChild(addSubRow);
+
+    return group;
+  }
+
+  function renderCatManageList() {
+    catManageListEl.innerHTML = "";
+    categories.forEach(function (cat) {
+      catManageListEl.appendChild(renderCatManageGroup(cat));
+    });
+  }
+
+  newCategoryForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var label = newCategoryInput.value.trim();
+    if (!label) return;
+    var existingIds = categories.map(function (c) { return c.id; });
+    var id = uniqueId(slugify(label), existingIds);
+    categories.push({ id: id, label: label, color: "var(--cat-neutral)", subcategories: [] });
+    newCategoryInput.value = "";
+    persist();
+    renderCatManageList();
+    render();
+  });
 
   updateSyncNote();
   if (window.claude && typeof window.claude.use === "function") {
