@@ -2029,6 +2029,43 @@
     aprendizagem: ["aprender","aprendizagem","estudar","estudo","curso","formacao","leitura","livro","ebook"]
   };
 
+  // An idea can name its own category explicitly with a leading
+  // "[Categoria]" or "[Categoria/Subcategoria]" tag, bypassing the keyword
+  // engine below. Matched against the current categories/subcategories by
+  // label (accent/case-insensitive) — an unrecognized name, on either side
+  // of the "/", means the whole tag is ignored and the line falls back to
+  // normal keyword classification untouched, brackets and all.
+  function parseCategoryTag(line) {
+    var m = /^\[([^\]]+)\]\s*(.*)$/.exec(line);
+    if (!m) return null;
+
+    var parts = m[1].split("/").map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!parts.length) return null;
+
+    var normCatLabel = normalize(parts[0]);
+    var cat = null;
+    for (var i = 0; i < categories.length; i++) {
+      if (normalize(categories[i].label) === normCatLabel) { cat = categories[i]; break; }
+    }
+    if (!cat) return null;
+
+    var subcategoryId = null;
+    if (parts[1]) {
+      var normSubLabel = normalize(parts[1]);
+      var sub = null;
+      for (var j = 0; j < cat.subcategories.length; j++) {
+        if (normalize(cat.subcategories[j].label) === normSubLabel) { sub = cat.subcategories[j]; break; }
+      }
+      if (!sub) return null;
+      subcategoryId = sub.id;
+    }
+
+    var text = m[2].trim();
+    if (!text) return null;
+
+    return { categoryId: cat.id, subcategoryId: subcategoryId, text: text };
+  }
+
   function classify(text) {
     var norm = normalize(text);
 
@@ -2263,10 +2300,14 @@
     var lines = raw.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
     if (!lines.length) return;
     lines.forEach(function (line, index) {
-      var result = classify(line);
+      var tag = parseCategoryTag(line);
+      var ideaText = tag ? tag.text : line;
+      var result = tag
+        ? finishClassify(normalize(tag.text), tag.categoryId, tag.subcategoryId)
+        : classify(line);
       ideas.push({
         id: uid(),
-        text: line,
+        text: ideaText,
         categoryId: result.categoryId,
         subcategoryId: result.subcategoryId,
         scores: result.scores,
