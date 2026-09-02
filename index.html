@@ -2027,12 +2027,56 @@
     aprendizagem: ["aprender","aprendizagem","estudar","estudo","curso","formacao","leitura","livro","ebook"]
   };
 
-  // An idea can name its own category explicitly with a leading
-  // "[Categoria]" or "[Categoria/Subcategoria]" tag, bypassing the keyword
-  // engine below. Matched against the current categories/subcategories by
-  // label (accent/case-insensitive) — an unrecognized name, on either side
-  // of the "/", means the whole tag is ignored and the line falls back to
-  // normal keyword classification untouched, brackets and all.
+  // An idea can name its own category explicitly with a leading tag,
+  // bypassing the keyword engine below — either "[Categoria]" /
+  // "[Categoria/Subcategoria]" (parseCategoryTag) or a hyphen-separated
+  // "Categoria - texto" / "Categoria - Subcategoria - texto" (parseHyphenTag).
+  // Both resolve names against the current categories/subcategories by
+  // label (accent/case-insensitive); an unrecognized name means the whole
+  // tag is ignored and the line falls back to normal keyword classification
+  // untouched.
+
+  function findCategoryByLabel(label) {
+    var norm = normalize(label);
+    for (var i = 0; i < categories.length; i++) {
+      if (normalize(categories[i].label) === norm) return categories[i];
+    }
+    return null;
+  }
+
+  function findSubcategoryByLabel(cat, label) {
+    var norm = normalize(label);
+    for (var i = 0; i < cat.subcategories.length; i++) {
+      if (normalize(cat.subcategories[i].label) === norm) return cat.subcategories[i];
+    }
+    return null;
+  }
+
+  // Prefix match across every category's subcategories, so a short handle
+  // like "Phakite" resolves to its parent project without spelling out
+  // "D_" or the exact subcategory. Several subcategories sharing that
+  // prefix collapse to just their common parent category (no specific
+  // subcategory picked); a prefix spanning categories with different
+  // parents is left unresolved rather than guessed at.
+  function findSubcategoryPrefixAnywhere(label) {
+    var norm = normalize(label);
+    if (!norm) return null;
+    var matches = [];
+    for (var i = 0; i < categories.length; i++) {
+      var cat = categories[i];
+      for (var j = 0; j < cat.subcategories.length; j++) {
+        var sub = cat.subcategories[j];
+        if (normalize(sub.label).indexOf(norm) === 0) matches.push({ category: cat, subcategory: sub });
+      }
+    }
+    if (!matches.length) return null;
+    var parentId = matches[0].category.id;
+    for (var k = 1; k < matches.length; k++) {
+      if (matches[k].category.id !== parentId) return null;
+    }
+    return { categoryId: parentId, subcategoryId: matches.length === 1 ? matches[0].subcategory.id : null };
+  }
+
   function parseCategoryTag(line) {
     var m = /^\[([^\]]+)\]\s*(.*)$/.exec(line);
     if (!m) return null;
@@ -2040,20 +2084,12 @@
     var parts = m[1].split("/").map(function (s) { return s.trim(); }).filter(Boolean);
     if (!parts.length) return null;
 
-    var normCatLabel = normalize(parts[0]);
-    var cat = null;
-    for (var i = 0; i < categories.length; i++) {
-      if (normalize(categories[i].label) === normCatLabel) { cat = categories[i]; break; }
-    }
+    var cat = findCategoryByLabel(parts[0]);
     if (!cat) return null;
 
     var subcategoryId = null;
     if (parts[1]) {
-      var normSubLabel = normalize(parts[1]);
-      var sub = null;
-      for (var j = 0; j < cat.subcategories.length; j++) {
-        if (normalize(cat.subcategories[j].label) === normSubLabel) { sub = cat.subcategories[j]; break; }
-      }
+      var sub = findSubcategoryByLabel(cat, parts[1]);
       if (!sub) return null;
       subcategoryId = sub.id;
     }
@@ -2062,6 +2098,43 @@
     if (!text) return null;
 
     return { categoryId: cat.id, subcategoryId: subcategoryId, text: text };
+  }
+
+  // "Categoria - Subcategoria - texto", "Categoria - texto", or
+  // "Subcategoria - texto" (the lone name may name a category outright, or
+  // a subcategory of any category, resolved via findSubcategoryPrefixAnywhere).
+  // Only the leading segment(s) actually consumed for categorization are
+  // stripped — a later " - " that's just part of the idea's own wording
+  // (e.g. "Casa - Revisão do carro - calcular custos") stays in the text.
+  var HYPHEN_SEP = /\s+-\s+/;
+
+  function parseHyphenTag(line) {
+    if (!HYPHEN_SEP.test(line)) return null;
+    var parts = line.split(HYPHEN_SEP);
+    if (parts.length < 2) return null;
+
+    if (parts.length >= 3) {
+      var cat2 = findCategoryByLabel(parts[0]);
+      if (cat2) {
+        var sub2 = findSubcategoryByLabel(cat2, parts[1]);
+        if (sub2) {
+          var text2 = parts.slice(2).join(" - ").trim();
+          if (text2) return { categoryId: cat2.id, subcategoryId: sub2.id, text: text2 };
+        }
+      }
+    }
+
+    var head = parts[0];
+    var rest = parts.slice(1).join(" - ").trim();
+    if (!rest) return null;
+
+    var cat1 = findCategoryByLabel(head);
+    if (cat1) return { categoryId: cat1.id, subcategoryId: null, text: rest };
+
+    var subMatch = findSubcategoryPrefixAnywhere(head);
+    if (subMatch) return { categoryId: subMatch.categoryId, subcategoryId: subMatch.subcategoryId, text: rest };
+
+    return null;
   }
 
   function classify(text) {
@@ -2298,7 +2371,7 @@
     var lines = raw.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
     if (!lines.length) return;
     lines.forEach(function (line, index) {
-      var tag = parseCategoryTag(line);
+      var tag = parseCategoryTag(line) || parseHyphenTag(line);
       var ideaText = tag ? tag.text : line;
       var result = tag
         ? finishClassify(normalize(tag.text), tag.categoryId, tag.subcategoryId)
