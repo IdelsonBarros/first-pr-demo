@@ -954,6 +954,7 @@
 
   var STORAGE_KEY = "ucopo:ideas:v1";
   var CATEGORIES_KEY = "ucopo:categories:v1";
+  var NAV_STATE_KEY = "ucopo:navstate:v1";
 
   var DOC_HEAD = `<!doctype html>
 <html lang="pt">
@@ -2263,6 +2264,30 @@
   var categories = loadInitialCategories();
   var ideas = loadInitialIdeas();
   var pendingImage = null;
+
+  // A successful artifactCap.publish() reloads this tab to the freshly
+  // published document (that's how the sync capability works — see
+  // persist() below), which would otherwise always drop the viewer back to
+  // the categories screen. saveNavState()/restoreNavState() stash where
+  // they were in sessionStorage right before that reload and pick it back
+  // up once, so editing or deleting an idea keeps you where you were.
+  function saveNavState() {
+    try {
+      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder }));
+    } catch (e) { /* sessionStorage unavailable; the reload lands on the default view */ }
+  }
+
+  function restoreNavState() {
+    try {
+      var raw = sessionStorage.getItem(NAV_STATE_KEY);
+      if (!raw) return null;
+      sessionStorage.removeItem(NAV_STATE_KEY);
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
   var sortOrder = "priority";
   // { kind: "categories" }
   // { kind: "subcategories", categoryId }
@@ -2270,6 +2295,12 @@
   //   {type:"category", categoryId} | {type:"subcategory", categoryId, subcategoryId} |
   //   {type:"subcategory-none", categoryId} }
   var view = { kind: "categories" };
+
+  var savedNav = restoreNavState();
+  if (savedNav) {
+    if (savedNav.view) view = savedNav.view;
+    if (savedNav.sortOrder) sortOrder = savedNav.sortOrder;
+  }
 
   var boardEl = document.getElementById("board");
   var breadcrumbEl = document.getElementById("breadcrumb");
@@ -2309,6 +2340,7 @@
       localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
     } catch (e) { /* storage unavailable, state stays in memory for this render */ }
     if (artifactCap) {
+      saveNavState();
       artifactCap.publish(buildFullDocument()).catch(function (err) {
         // "conflict": the platform is already reloading every view to the
         // winning version. "too_large": say so — this browser's localStorage
