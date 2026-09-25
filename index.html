@@ -522,36 +522,6 @@
     gap: 8px;
   }
 
-  .main-tabs {
-    display: inline-flex;
-    align-self: flex-start;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 3px;
-    gap: 2px;
-  }
-
-  .tab-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    font: inherit;
-    font-size: 0.86rem;
-    font-weight: 500;
-    padding: 7px 16px;
-    border-radius: 999px;
-  }
-
-  .tab-btn:hover { color: var(--text); }
-
-  .tab-btn.active {
-    background: var(--accent);
-    color: var(--accent-ink);
-  }
-
-  .week-view[hidden] { display: none; }
-
   .week-view {
     background: #0d0d11;
     border-radius: 12px;
@@ -641,6 +611,28 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  .week-chip-remove {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 0;
+    flex: none;
+    opacity: 0;
+  }
+
+  .week-chip:hover .week-chip-remove,
+  .week-chip:focus-within .week-chip-remove {
+    opacity: 0.75;
+  }
+
+  .week-chip-remove:hover { opacity: 1; }
+
+  .nav-card[draggable="true"] { cursor: grab; }
+
+  .nav-card[draggable="true"]:active { cursor: grabbing; }
 
   .week-note-wrap {
     display: flex;
@@ -1096,10 +1088,7 @@
       </div>
     </section>
 
-    <section class="main-tabs" id="mainTabs">
-      <button type="button" class="tab-btn" data-tab="week">Dias da Semana</button>
-      <button type="button" class="tab-btn" data-tab="categories">Categorias</button>
-    </section>
+    <section class="week-view" id="weekView"></section>
 
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
@@ -1110,8 +1099,6 @@
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
-
-    <section class="week-view" id="weekView" hidden></section>
 
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
@@ -1682,36 +1669,6 @@
     gap: 8px;
   }
 
-  .main-tabs {
-    display: inline-flex;
-    align-self: flex-start;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 3px;
-    gap: 2px;
-  }
-
-  .tab-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    font: inherit;
-    font-size: 0.86rem;
-    font-weight: 500;
-    padding: 7px 16px;
-    border-radius: 999px;
-  }
-
-  .tab-btn:hover { color: var(--text); }
-
-  .tab-btn.active {
-    background: var(--accent);
-    color: var(--accent-ink);
-  }
-
-  .week-view[hidden] { display: none; }
-
   .week-view {
     background: #0d0d11;
     border-radius: 12px;
@@ -1801,6 +1758,28 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  .week-chip-remove {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 0;
+    flex: none;
+    opacity: 0;
+  }
+
+  .week-chip:hover .week-chip-remove,
+  .week-chip:focus-within .week-chip-remove {
+    opacity: 0.75;
+  }
+
+  .week-chip-remove:hover { opacity: 1; }
+
+  .nav-card[draggable="true"] { cursor: grab; }
+
+  .nav-card[draggable="true"]:active { cursor: grabbing; }
 
   .week-note-wrap {
     display: flex;
@@ -2256,10 +2235,7 @@
       </div>
     </section>
 
-    <section class="main-tabs" id="mainTabs">
-      <button type="button" class="tab-btn" data-tab="week">Dias da Semana</button>
-      <button type="button" class="tab-btn" data-tab="categories">Categorias</button>
-    </section>
+    <section class="week-view" id="weekView"></section>
 
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
@@ -2270,8 +2246,6 @@
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
-
-    <section class="week-view" id="weekView" hidden></section>
 
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
@@ -2844,7 +2818,7 @@
   // up once, so editing or deleting an idea keeps you where you were.
   function saveNavState() {
     try {
-      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder, mainTab: mainTab }));
+      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder }));
     } catch (e) { /* sessionStorage unavailable; the reload lands on the default view */ }
   }
 
@@ -2870,23 +2844,17 @@
   // of view (see render()) — it's a lookup across every idea, not a place
   // you navigate to and stay in, so it isn't part of the saved nav state.
   var searchQuery = "";
-  // Which top-level tab is showing: "week" (the default, per spec) or
-  // "categories" — see renderMainTab(). The existing categories nav-header
-  // + board are hidden but otherwise completely untouched while on "week".
-  var mainTab = "week";
 
   var savedNav = restoreNavState();
   if (savedNav) {
     if (savedNav.view) view = savedNav.view;
     if (savedNav.sortOrder) sortOrder = savedNav.sortOrder;
-    if (savedNav.mainTab) mainTab = savedNav.mainTab;
   }
 
   var boardEl = document.getElementById("board");
   var breadcrumbEl = document.getElementById("breadcrumb");
   var navActionsEl = document.getElementById("navActions");
   var navHeaderEl = document.querySelector(".nav-header");
-  var mainTabsEl = document.getElementById("mainTabs");
   var weekViewEl = document.getElementById("weekView");
   var historyBtn = document.getElementById("historyBtn");
   var searchInputEl = document.getElementById("searchInput");
@@ -3174,7 +3142,11 @@
     return div;
   }
 
-  function makeNavCard(label, count, color, hasChildren, uncategorized, onClick) {
+  // dragCategoryId/dragSubcategoryId, when given, make the card a source for
+  // the week grid below: dragging it onto a cell there creates a new chip
+  // (see the week-cell "drop" handler) without disturbing the card's normal
+  // click-to-navigate behavior.
+  function makeNavCard(label, count, color, hasChildren, uncategorized, onClick, dragCategoryId, dragSubcategoryId) {
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "nav-card" + (uncategorized ? " uncategorized" : "");
@@ -3198,6 +3170,17 @@
       chevron.setAttribute("aria-hidden", "true");
       btn.appendChild(chevron);
     }
+    if (dragCategoryId) {
+      btn.draggable = true;
+      btn.addEventListener("dragstart", function (e) {
+        e.dataTransfer.setData("application/json", JSON.stringify({
+          kind: "create",
+          categoryId: dragCategoryId,
+          subcategoryId: dragSubcategoryId || null
+        }));
+        e.dataTransfer.effectAllowed = "copy";
+      });
+    }
     btn.addEventListener("click", onClick);
     return btn;
   }
@@ -3210,7 +3193,7 @@
       grid.appendChild(makeNavCard(cat.label, count, cat.color, cat.subcategories.length > 0, false, function () {
         if (cat.subcategories.length) goToSubcategories(cat.id);
         else goToIdeas({ type: "category", categoryId: cat.id });
-      }));
+      }, cat.id, null));
     });
     var uncatCount = ideas.filter(function (i) { return !i.categoryId && !i.done; }).length;
     if (uncatCount > 0) {
@@ -3235,13 +3218,13 @@
       var count = ideas.filter(function (i) { return i.categoryId === cat.id && i.subcategoryId === sub.id && !i.done; }).length;
       grid.appendChild(makeNavCard(sub.label, count, cat.color, false, false, function () {
         goToIdeas({ type: "subcategory", categoryId: cat.id, subcategoryId: sub.id });
-      }));
+      }, cat.id, sub.id));
     });
     var noneCount = ideas.filter(function (i) { return i.categoryId === cat.id && !i.subcategoryId && !i.done; }).length;
     if (noneCount > 0) {
       grid.appendChild(makeNavCard("Sem subcategoria", noneCount, cat.color, false, true, function () {
         goToIdeas({ type: "subcategory-none", categoryId: cat.id });
-      }));
+      }, cat.id, null));
     }
     boardEl.appendChild(grid);
     if (!cat.subcategories.length && noneCount === 0) boardEl.appendChild(emptyState("Sem subcategorias ainda."));
@@ -3654,47 +3637,13 @@
   }
 
   // --- "Dias da Semana" view ------------------------------------------------
-  // A second top-level tab alongside Categorias (see mainTabsEl below). The
-  // existing nav-header + board are only hidden while this tab is active —
-  // nothing about their markup or render logic above is touched.
-
-  function renderMainTab() {
-    var tabBtns = mainTabsEl.querySelectorAll(".tab-btn");
-    for (var i = 0; i < tabBtns.length; i++) {
-      tabBtns[i].classList.toggle("active", tabBtns[i].dataset.tab === mainTab);
-    }
-    if (mainTab === "week") {
-      navHeaderEl.hidden = true;
-      boardEl.hidden = true;
-      weekViewEl.hidden = false;
-      renderWeekView();
-    } else {
-      navHeaderEl.hidden = false;
-      boardEl.hidden = false;
-      weekViewEl.hidden = true;
-      render();
-    }
-  }
-
-  function openTopIdeaForCategory(categoryId, subcategoryId) {
-    function pick(matchSub) {
-      var candidates = ideas.filter(function (i) {
-        if (i.done || i.categoryId !== categoryId) return false;
-        if (matchSub && subcategoryId && i.subcategoryId !== subcategoryId) return false;
-        return true;
-      });
-      candidates.sort(function (a, b) {
-        var diff = priorityRank(b.priority) - priorityRank(a.priority);
-        return diff !== 0 ? diff : b.createdAt - a.createdAt;
-      });
-      return candidates[0] || null;
-    }
-    // Prefer an idea in the chip's own subcategory; fall back to the wider
-    // category so a click on a specific chip (e.g. Aprendizagem · Leitura)
-    // isn't a dead end just because that exact subcategory has no ideas yet.
-    var top = pick(true) || pick(false);
-    if (top) openIdeaModal(top);
-  }
+  // Always shown above the categories nav-header + board (see render() call
+  // sites below) — no separate tab any more. The categories cards underneath
+  // double as a drag source: dragging a card onto a cell creates a chip
+  // there (addChipToCell), and a chip already on the grid can still be
+  // dragged between cells (moveChip). Clicking a placed chip navigates the
+  // categories board to that category/subcategory's idea list instead of
+  // picking an idea automatically — the choice of which idea stays manual.
 
   function moveChip(chipId, targetDay, targetPeriod) {
     var sourceCell = null, movedChip = null, idx = -1;
@@ -3713,7 +3662,20 @@
     renderWeekView();
   }
 
-  function renderWeekChip(chipData) {
+  function addChipToCell(categoryId, subcategoryId, day, period) {
+    var cellData = ensureCell(day, period);
+    cellData.chips.push(chip(categoryId, subcategoryId));
+    persist();
+    renderWeekView();
+  }
+
+  function removeChip(chipId, cellData) {
+    cellData.chips = cellData.chips.filter(function (c) { return c.id !== chipId; });
+    persist();
+    renderWeekView();
+  }
+
+  function renderWeekChip(chipData, cellData) {
     var color = WEEK_CHIP_COLORS[chipData.categoryId] || "#8b8b97";
     var cat = findCategory(chipData.categoryId);
     var sub = findSubcategory(chipData.categoryId, chipData.subcategoryId);
@@ -3736,13 +3698,27 @@
     text.textContent = label;
     wrap.appendChild(text);
 
+    var removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "week-chip-remove";
+    removeBtn.setAttribute("aria-label", "Remover");
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      removeChip(chipData.id, cellData);
+    });
+    wrap.appendChild(removeBtn);
+
     wrap.addEventListener("dragstart", function (e) {
-      e.dataTransfer.setData("text/plain", chipData.id);
+      e.dataTransfer.setData("application/json", JSON.stringify({ kind: "move", chipId: chipData.id }));
       e.dataTransfer.effectAllowed = "move";
     });
 
     wrap.addEventListener("click", function () {
-      openTopIdeaForCategory(chipData.categoryId, chipData.subcategoryId);
+      goToIdeas(chipData.subcategoryId
+        ? { type: "subcategory", categoryId: chipData.categoryId, subcategoryId: chipData.subcategoryId }
+        : { type: "category", categoryId: chipData.categoryId });
+      navHeaderEl.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     return wrap;
@@ -3790,7 +3766,7 @@
     el.className = "week-cell";
 
     cellData.chips.forEach(function (chipData) {
-      el.appendChild(renderWeekChip(chipData));
+      el.appendChild(renderWeekChip(chipData, cellData));
     });
     el.appendChild(renderWeekNote(cellData));
 
@@ -3802,8 +3778,15 @@
     el.addEventListener("drop", function (e) {
       e.preventDefault();
       el.classList.remove("drag-over");
-      var chipId = e.dataTransfer.getData("text/plain");
-      if (chipId) moveChip(chipId, dayId, periodId);
+      var raw = e.dataTransfer.getData("application/json");
+      if (!raw) return;
+      var payload;
+      try { payload = JSON.parse(raw); } catch (err) { return; }
+      if (payload.kind === "move" && payload.chipId) {
+        moveChip(payload.chipId, dayId, periodId);
+      } else if (payload.kind === "create" && payload.categoryId) {
+        addChipToCell(payload.categoryId, payload.subcategoryId, dayId, periodId);
+      }
     });
 
     return el;
@@ -3836,13 +3819,6 @@
     weekViewEl.appendChild(grid);
   }
 
-  mainTabsEl.addEventListener("click", function (e) {
-    var btn = e.target.closest(".tab-btn");
-    if (!btn) return;
-    mainTab = btn.dataset.tab;
-    renderMainTab();
-  });
-
   // --- Category management modal -----------------------------------------
 
   function openCatModal() {
@@ -3857,9 +3833,8 @@
   historyBtn.addEventListener("click", function () {
     searchInputEl.value = "";
     searchQuery = "";
-    mainTab = "categories";
     goToHistory();
-    renderMainTab();
+    navHeaderEl.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   searchInputEl.addEventListener("input", function () {
@@ -4006,7 +3981,8 @@
     });
   }
 
-  renderMainTab();
+  renderWeekView();
+  render();
 })();
 </script>
 </body>
