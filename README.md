@@ -10,10 +10,10 @@ Este projeto foi criado para testar o fluxo completo de contribuição via Pull 
 
 `index.html` é uma aplicação web de página única: cola uma ideia (ou várias, uma por linha) e ela é automaticamente:
 
-- **Categorizada** numa categoria (Casa, Capoeira, Finanças, Negócios e Investimentos, Social, Profissional, D_, Aprendizagem — as duas últimas com subcategorias) por palavras-chave no texto. Sem correspondência óbvia, fica "por categorizar".
+- **Categorizada** numa categoria (Casa, Capoeira, Finanças, Negócios e Investimentos, Social, Profissional, Sistemas, Aprendizagem — estas duas últimas, mais Casa, com subcategorias) por palavras-chave no texto. Sem correspondência óbvia, fica "por categorizar".
 - **Classificada por relevância** (Baixa / Média / Alta), consoante indica gerar mais bem-estar, mais dinheiro e/ou poupar mais tempo.
 
-O ecrã principal mostra as categorias como cartões compactos (nome + contagem, com uma seta nas que têm subcategorias); clicar leva aos cartões dessas subcategorias, e daí à lista de ideias dessa área — com um breadcrumb para voltar atrás em qualquer nível. O botão "Definições" no canto superior abre a gestão de categorias e subcategorias (criar e renomear).
+A app abre na vista **"Dias da Semana"**: uma grelha de 7 dias × 4 períodos (Manhã, Tarde, Noite, Hábito Empilhado), onde cada célula pode ter pílulas de categoria/subcategoria (arrastáveis entre células) e uma nota de texto livre editável. Clicar numa pílula abre diretamente a ideia de maior prioridade dessa categoria. O separador "Categorias", ao lado, mostra a navegação original por cartões (nome + contagem, com uma seta nas que têm subcategorias); clicar leva aos cartões dessas subcategorias, e daí à lista de ideias dessa área — com um breadcrumb para voltar atrás em qualquer nível. O botão "Definições" no canto superior abre a gestão de categorias e subcategorias (criar e renomear).
 
 Dentro de uma categoria, as ideias aparecem como lista compacta (uma linha cada): texto, categoria (só na vista "Todas"/"Por categorizar") e prioridade. Passar o cursor (ou tocar, em ecrãs táteis) revela as ações — copiar, concluir/reabrir, editar o texto, eliminar. Clicar no texto abre o detalhe completo (Bem-estar/Dinheiro/Tempo, imagem, categoria/subcategoria num dropdown dependente).
 

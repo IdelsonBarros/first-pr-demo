@@ -522,6 +522,167 @@
     gap: 8px;
   }
 
+  .main-tabs {
+    display: inline-flex;
+    align-self: flex-start;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 999px;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .week-view[hidden] { display: none; }
+
+  .week-view {
+    background: #0d0d11;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .week-grid {
+    display: grid;
+    grid-template-columns: 108px repeat(7, minmax(112px, 1fr));
+    gap: 8px;
+    min-width: 860px;
+  }
+
+  .week-corner { }
+
+  .week-day-header {
+    color: #f2ede3;
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 4px 2px;
+  }
+
+  .week-period-header {
+    color: #8b8b97;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    padding: 4px 2px;
+  }
+
+  .week-cell {
+    background: #17171c;
+    border: 1px solid #26262e;
+    border-radius: 12px;
+    padding: 8px;
+    min-height: 78px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .week-cell.drag-over { border-color: #8b8b97; }
+
+  .week-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    background: color-mix(in srgb, var(--chip-color) 14%, transparent);
+    color: var(--chip-color);
+    border: 1px solid var(--chip-color);
+    border-radius: 999px;
+    padding: 3px 10px 3px 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+
+  .week-chip-handle {
+    display: inline-grid;
+    grid-template-columns: repeat(2, 3px);
+    grid-template-rows: repeat(3, 3px);
+    gap: 2px;
+    flex: none;
+    cursor: grab;
+  }
+
+  .week-chip-handle span {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  .week-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .week-note-wrap {
+    display: flex;
+    width: 100%;
+  }
+
+  .week-note {
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #8b8b97;
+    cursor: pointer;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    width: 100%;
+  }
+
+  .week-note-empty { opacity: 0; }
+
+  .week-cell:hover .week-note-empty,
+  .week-cell:focus-within .week-note-empty {
+    opacity: 0.5;
+  }
+
+  .week-note-edit {
+    width: 100%;
+    font: inherit;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #f2ede3;
+    background: #1e1e24;
+    border: 1px solid #26262e;
+    border-radius: 6px;
+    padding: 3px 5px;
+    resize: vertical;
+    min-height: 32px;
+  }
+
   .nav-header {
     display: flex;
     align-items: center;
@@ -935,6 +1096,11 @@
       </div>
     </section>
 
+    <section class="main-tabs" id="mainTabs">
+      <button type="button" class="tab-btn" data-tab="week">Dias da Semana</button>
+      <button type="button" class="tab-btn" data-tab="categories">Categorias</button>
+    </section>
+
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
       <div class="nav-search">
@@ -944,6 +1110,8 @@
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
+
+    <section class="week-view" id="weekView" hidden></section>
 
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
@@ -980,12 +1148,14 @@
 
 <script type="application/json" id="ideas-data">[]</script>
 <script type="application/json" id="categories-data">[]</script>
+<script type="application/json" id="schedule-data">[]</script>
 <script>
 (function appMain() {
   "use strict";
 
   var STORAGE_KEY = "ucopo:ideas:v1";
   var CATEGORIES_KEY = "ucopo:categories:v1";
+  var SCHEDULE_KEY = "ucopo:schedule:v1";
   var NAV_STATE_KEY = "ucopo:navstate:v1";
 
   var DOC_HEAD = `<!doctype html>
@@ -1512,6 +1682,167 @@
     gap: 8px;
   }
 
+  .main-tabs {
+    display: inline-flex;
+    align-self: flex-start;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 999px;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .week-view[hidden] { display: none; }
+
+  .week-view {
+    background: #0d0d11;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .week-grid {
+    display: grid;
+    grid-template-columns: 108px repeat(7, minmax(112px, 1fr));
+    gap: 8px;
+    min-width: 860px;
+  }
+
+  .week-corner { }
+
+  .week-day-header {
+    color: #f2ede3;
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 4px 2px;
+  }
+
+  .week-period-header {
+    color: #8b8b97;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    padding: 4px 2px;
+  }
+
+  .week-cell {
+    background: #17171c;
+    border: 1px solid #26262e;
+    border-radius: 12px;
+    padding: 8px;
+    min-height: 78px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .week-cell.drag-over { border-color: #8b8b97; }
+
+  .week-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    background: color-mix(in srgb, var(--chip-color) 14%, transparent);
+    color: var(--chip-color);
+    border: 1px solid var(--chip-color);
+    border-radius: 999px;
+    padding: 3px 10px 3px 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+
+  .week-chip-handle {
+    display: inline-grid;
+    grid-template-columns: repeat(2, 3px);
+    grid-template-rows: repeat(3, 3px);
+    gap: 2px;
+    flex: none;
+    cursor: grab;
+  }
+
+  .week-chip-handle span {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  .week-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .week-note-wrap {
+    display: flex;
+    width: 100%;
+  }
+
+  .week-note {
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #8b8b97;
+    cursor: pointer;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    width: 100%;
+  }
+
+  .week-note-empty { opacity: 0; }
+
+  .week-cell:hover .week-note-empty,
+  .week-cell:focus-within .week-note-empty {
+    opacity: 0.5;
+  }
+
+  .week-note-edit {
+    width: 100%;
+    font: inherit;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #f2ede3;
+    background: #1e1e24;
+    border: 1px solid #26262e;
+    border-radius: 6px;
+    padding: 3px 5px;
+    resize: vertical;
+    min-height: 32px;
+  }
+
   .nav-header {
     display: flex;
     align-items: center;
@@ -1925,6 +2256,11 @@
       </div>
     </section>
 
+    <section class="main-tabs" id="mainTabs">
+      <button type="button" class="tab-btn" data-tab="week">Dias da Semana</button>
+      <button type="button" class="tab-btn" data-tab="categories">Categorias</button>
+    </section>
+
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
       <div class="nav-search">
@@ -1934,6 +2270,8 @@
     </section>
 
     <main class="board" id="board" aria-live="polite"></main>
+
+    <section class="week-view" id="weekView" hidden></section>
 
     <footer class="footer">
       <p id="syncNote">As tuas ideias ficam guardadas só neste navegador (localStorage). Nada é enviado para nenhum servidor.</p>
@@ -2004,13 +2342,21 @@
 
   function defaultCategories() {
     return [
-      { id: "casa", label: "Casa", color: "var(--cat-casa)", subcategories: [] },
+      { id: "casa", label: "Casa", color: "var(--cat-casa)", subcategories: [
+        { id: "manutencao", label: "Manutenção" },
+        { id: "saude-cuidados-pessoais", label: "Saúde & Cuidados Pessoais" },
+        { id: "rotina-produtividade", label: "Rotina & Produtividade" },
+        { id: "lazer", label: "Lazer" }
+      ] },
       { id: "capoeira", label: "Capoeira", color: "var(--cat-capoeira)", subcategories: [] },
       { id: "financas", label: "Finanças", color: "var(--cat-financas)", subcategories: [] },
       { id: "negocios", label: "Negócios e Investimentos", color: "var(--cat-negocios)", subcategories: [] },
       { id: "social", label: "Social", color: "var(--cat-social)", subcategories: [] },
       { id: "profissional", label: "Profissional", color: "var(--cat-profissional)", subcategories: [] },
-      { id: "d_", label: "D_", color: "var(--cat-d)", subcategories: [
+      // The id stays "d_" for backward compatibility with data already
+      // saved under it — only the label changed (D_ -> Sistemas). Existing
+      // persisted categories get the same rename via migrateCategories().
+      { id: "d_", label: "Sistemas", color: "var(--cat-d)", subcategories: [
         { id: "phakite-base44", label: "Phakite Base44" },
         { id: "phakite-claude-code", label: "Phakite Claude Code" },
         { id: "mtchovelo", label: "M'tchovelo" },
@@ -2019,27 +2365,60 @@
       { id: "aprendizagem", label: "Aprendizagem", color: "var(--cat-aprendizagem)", subcategories: [
         { id: "youtube", label: "YouTube" },
         { id: "leitura", label: "Leitura" },
-        { id: "mestrado", label: "Mestrado" }
+        { id: "mestrado", label: "Mestrado" },
+        { id: "cursos", label: "Cursos" },
+        { id: "conceitos", label: "Conceitos" }
       ] }
     ];
   }
 
+  // Applied to whatever category list is loaded (fresh defaults or
+  // already-persisted data) so existing installs pick up the D_ -> Sistemas
+  // rename and the new subcategories without losing anything the user
+  // already added. Idempotent: safe to run on data that already has them.
+  function migrateCategories(cats) {
+    var d = cats.filter(function (c) { return c.id === "d_"; })[0];
+    if (d && d.label === "D_") d.label = "Sistemas";
+
+    function ensureSub(cat, id, label) {
+      if (!cat) return;
+      var exists = cat.subcategories.some(function (s) { return s.id === id; });
+      if (!exists) cat.subcategories.push({ id: id, label: label });
+    }
+
+    var aprendizagem = cats.filter(function (c) { return c.id === "aprendizagem"; })[0];
+    ensureSub(aprendizagem, "cursos", "Cursos");
+    ensureSub(aprendizagem, "conceitos", "Conceitos");
+
+    var casa = cats.filter(function (c) { return c.id === "casa"; })[0];
+    ensureSub(casa, "manutencao", "Manutenção");
+    ensureSub(casa, "saude-cuidados-pessoais", "Saúde & Cuidados Pessoais");
+    ensureSub(casa, "rotina-produtividade", "Rotina & Produtividade");
+    ensureSub(casa, "lazer", "Lazer");
+
+    return cats;
+  }
+
   function loadInitialCategories() {
+    var cats = null;
     try {
       var tag = document.getElementById("categories-data");
       if (tag) {
         var fromDoc = JSON.parse(tag.textContent || "[]");
-        if (fromDoc.length) return fromDoc;
+        if (fromDoc.length) cats = fromDoc;
       }
     } catch (e) { /* fall through */ }
-    try {
-      var raw = localStorage.getItem(CATEGORIES_KEY);
-      if (raw) {
-        var fromStorage = JSON.parse(raw);
-        if (fromStorage.length) return fromStorage;
-      }
-    } catch (e) { /* fall through */ }
-    return defaultCategories();
+    if (!cats) {
+      try {
+        var raw = localStorage.getItem(CATEGORIES_KEY);
+        if (raw) {
+          var fromStorage = JSON.parse(raw);
+          if (fromStorage.length) cats = fromStorage;
+        }
+      } catch (e) { /* fall through */ }
+    }
+    if (!cats) cats = defaultCategories();
+    return migrateCategories(cats);
   }
 
   function findCategory(id) {
@@ -2054,6 +2433,125 @@
       if (cat.subcategories[i].id === subcategoryId) return cat.subcategories[i];
     }
     return null;
+  }
+
+  // --- Weekly schedule ("Dias da Semana" view) ------------------------------
+  // A separate, additive view: a 7 (day) x 4 (period) grid where each cell
+  // can hold category/subcategory chips (draggable between cells) and one
+  // free-text note. Persisted the same way as ideas/categories.
+
+  var DAYS = [
+    { id: "seg", label: "2ª" },
+    { id: "ter", label: "3ª" },
+    { id: "qua", label: "4ª" },
+    { id: "qui", label: "5ª" },
+    { id: "sex", label: "6ª" },
+    { id: "sab", label: "Sábado" },
+    { id: "dom", label: "Domingo" }
+  ];
+
+  var PERIODS = [
+    { id: "manha", label: "Manhã" },
+    { id: "tarde", label: "Tarde" },
+    { id: "noite", label: "Noite" },
+    { id: "habito", label: "Hábito Empilhado" }
+  ];
+
+  // Fixed hex colors for the week view's chips — a distinct, always-dark
+  // palette independent of the app's --cat-* theme variables (see the
+  // week-* CSS rules), keyed by category id.
+  var WEEK_CHIP_COLORS = {
+    aprendizagem: "#6fcf7a",
+    capoeira: "#4fd1a5",
+    negocios: "#e05fa0",
+    d_: "#8f7ae8",
+    social: "#e0c15f",
+    casa: "#f0975f",
+    financas: "#5b9bf0",
+    profissional: "#b892e8"
+  };
+
+  function chip(categoryId, subcategoryId) {
+    return { id: uid(), categoryId: categoryId, subcategoryId: subcategoryId || null };
+  }
+
+  function defaultSchedule() {
+    function cell(day, period, chips, note) {
+      return { day: day, period: period, chips: chips || [], note: note || "" };
+    }
+    var leitura = function () { return [chip("aprendizagem", "leitura")]; };
+    var mestrado = function () { return [chip("aprendizagem", "mestrado")]; };
+    var capoeira = function () { return [chip("capoeira", null)]; };
+    var sistemas = function () { return [chip("d_", null)]; };
+    var negocios = function () { return [chip("negocios", null)]; };
+    var social = function () { return [chip("social", null)]; };
+    return [
+      cell("seg", "manha", leitura()),
+      cell("ter", "manha", mestrado()),
+      cell("qua", "manha", leitura()),
+      cell("qui", "manha", mestrado()),
+      cell("sex", "manha", leitura()),
+      cell("sab", "manha", negocios()),
+      cell("dom", "manha", capoeira()),
+
+      cell("seg", "tarde", [], "Revisão de Notas/Ideias"),
+      cell("ter", "tarde", [], "Revisão de Notas/Ideias"),
+      cell("qua", "tarde", [], "Revisão de Notas/Ideias"),
+      cell("qui", "tarde", [], "Revisão de Notas/Ideias"),
+      cell("sex", "tarde", [], "Revisão de Notas/Ideias"),
+      cell("sab", "tarde", sistemas()),
+      cell("dom", "tarde", capoeira(), "Treino"),
+
+      cell("seg", "noite", capoeira(), "aula"),
+      cell("ter", "noite", [], "Flexões + Musicalidade"),
+      cell("qua", "noite", mestrado(), "aula"),
+      cell("qui", "noite", [], "Flexões + Cardio"),
+      cell("sex", "noite", mestrado(), "aula"),
+      cell("sab", "noite"),
+      cell("dom", "noite", social(), "Baby"),
+
+      cell("seg", "habito", [], "Audiobook · 30min"),
+      cell("ter", "habito", [], "Audiobook · 30min"),
+      cell("qua", "habito", [], "Audiobook · 30min"),
+      cell("qui", "habito", [], "Audiobook · 30min"),
+      cell("sex", "habito", capoeira(), "Podcast/Filme"),
+      cell("sab", "habito"),
+      cell("dom", "habito")
+    ];
+  }
+
+  function loadInitialSchedule() {
+    try {
+      var tag = document.getElementById("schedule-data");
+      if (tag) {
+        var fromDoc = JSON.parse(tag.textContent || "[]");
+        if (fromDoc.length) return fromDoc;
+      }
+    } catch (e) { /* fall through */ }
+    try {
+      var raw = localStorage.getItem(SCHEDULE_KEY);
+      if (raw) {
+        var fromStorage = JSON.parse(raw);
+        if (fromStorage.length) return fromStorage;
+      }
+    } catch (e) { /* fall through */ }
+    return defaultSchedule();
+  }
+
+  function findCell(day, period) {
+    for (var i = 0; i < schedule.length; i++) {
+      if (schedule[i].day === day && schedule[i].period === period) return schedule[i];
+    }
+    return null;
+  }
+
+  function ensureCell(day, period) {
+    var cell = findCell(day, period);
+    if (!cell) {
+      cell = { day: day, period: period, chips: [], note: "" };
+      schedule.push(cell);
+    }
+    return cell;
   }
 
   // --- Relevance axes ------------------------------------------------------
@@ -2327,6 +2825,7 @@
   var artifactCap = null;
   var categories = loadInitialCategories();
   var ideas = loadInitialIdeas();
+  var schedule = loadInitialSchedule();
   var pendingImage = null;
 
   // Each artifactCap.publish() causes a full reload of this tab (see
@@ -2345,7 +2844,7 @@
   // up once, so editing or deleting an idea keeps you where you were.
   function saveNavState() {
     try {
-      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder }));
+      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder, mainTab: mainTab }));
     } catch (e) { /* sessionStorage unavailable; the reload lands on the default view */ }
   }
 
@@ -2371,16 +2870,24 @@
   // of view (see render()) — it's a lookup across every idea, not a place
   // you navigate to and stay in, so it isn't part of the saved nav state.
   var searchQuery = "";
+  // Which top-level tab is showing: "week" (the default, per spec) or
+  // "categories" — see renderMainTab(). The existing categories nav-header
+  // + board are hidden but otherwise completely untouched while on "week".
+  var mainTab = "week";
 
   var savedNav = restoreNavState();
   if (savedNav) {
     if (savedNav.view) view = savedNav.view;
     if (savedNav.sortOrder) sortOrder = savedNav.sortOrder;
+    if (savedNav.mainTab) mainTab = savedNav.mainTab;
   }
 
   var boardEl = document.getElementById("board");
   var breadcrumbEl = document.getElementById("breadcrumb");
   var navActionsEl = document.getElementById("navActions");
+  var navHeaderEl = document.querySelector(".nav-header");
+  var mainTabsEl = document.getElementById("mainTabs");
+  var weekViewEl = document.getElementById("weekView");
   var historyBtn = document.getElementById("historyBtn");
   var searchInputEl = document.getElementById("searchInput");
   var inputEl = document.getElementById("ideaInput");
@@ -2406,9 +2913,11 @@
   function buildFullDocument() {
     var ideasJson = JSON.stringify(ideas).replace(/</g, "\u003c");
     var catsJson = JSON.stringify(categories).replace(/</g, "\u003c");
+    var scheduleJson = JSON.stringify(schedule).replace(/</g, "\u003c");
     return DOC_HEAD +
       '<script type="application/json" id="ideas-data">' + ideasJson + '<\/script>\n' +
       '<script type="application/json" id="categories-data">' + catsJson + '<\/script>\n' +
+      '<script type="application/json" id="schedule-data">' + scheduleJson + '<\/script>\n' +
       '<script>\n(' + appMain.toString() + ')();\n<\/script>\n</body>\n</html>';
   }
 
@@ -2416,6 +2925,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
       localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+      localStorage.setItem(SCHEDULE_KEY, JSON.stringify(schedule));
     } catch (e) { /* storage unavailable, state stays in memory for this render */ }
     if (!artifactCap) return;
     clearTimeout(persistDebounceTimer);
@@ -3143,6 +3653,196 @@
     renderBoard();
   }
 
+  // --- "Dias da Semana" view ------------------------------------------------
+  // A second top-level tab alongside Categorias (see mainTabsEl below). The
+  // existing nav-header + board are only hidden while this tab is active —
+  // nothing about their markup or render logic above is touched.
+
+  function renderMainTab() {
+    var tabBtns = mainTabsEl.querySelectorAll(".tab-btn");
+    for (var i = 0; i < tabBtns.length; i++) {
+      tabBtns[i].classList.toggle("active", tabBtns[i].dataset.tab === mainTab);
+    }
+    if (mainTab === "week") {
+      navHeaderEl.hidden = true;
+      boardEl.hidden = true;
+      weekViewEl.hidden = false;
+      renderWeekView();
+    } else {
+      navHeaderEl.hidden = false;
+      boardEl.hidden = false;
+      weekViewEl.hidden = true;
+      render();
+    }
+  }
+
+  function openTopIdeaForCategory(categoryId, subcategoryId) {
+    function pick(matchSub) {
+      var candidates = ideas.filter(function (i) {
+        if (i.done || i.categoryId !== categoryId) return false;
+        if (matchSub && subcategoryId && i.subcategoryId !== subcategoryId) return false;
+        return true;
+      });
+      candidates.sort(function (a, b) {
+        var diff = priorityRank(b.priority) - priorityRank(a.priority);
+        return diff !== 0 ? diff : b.createdAt - a.createdAt;
+      });
+      return candidates[0] || null;
+    }
+    // Prefer an idea in the chip's own subcategory; fall back to the wider
+    // category so a click on a specific chip (e.g. Aprendizagem · Leitura)
+    // isn't a dead end just because that exact subcategory has no ideas yet.
+    var top = pick(true) || pick(false);
+    if (top) openIdeaModal(top);
+  }
+
+  function moveChip(chipId, targetDay, targetPeriod) {
+    var sourceCell = null, movedChip = null, idx = -1;
+    for (var i = 0; i < schedule.length && !movedChip; i++) {
+      var c = schedule[i];
+      for (var j = 0; j < c.chips.length; j++) {
+        if (c.chips[j].id === chipId) { sourceCell = c; movedChip = c.chips[j]; idx = j; break; }
+      }
+    }
+    if (!movedChip) return;
+    if (sourceCell.day === targetDay && sourceCell.period === targetPeriod) return;
+    sourceCell.chips.splice(idx, 1);
+    var targetCell = ensureCell(targetDay, targetPeriod);
+    targetCell.chips.push(movedChip);
+    persist();
+    renderWeekView();
+  }
+
+  function renderWeekChip(chipData) {
+    var color = WEEK_CHIP_COLORS[chipData.categoryId] || "#8b8b97";
+    var cat = findCategory(chipData.categoryId);
+    var sub = findSubcategory(chipData.categoryId, chipData.subcategoryId);
+    var label = cat ? (sub ? cat.label + " · " + sub.label : cat.label) : "?";
+
+    var wrap = document.createElement("div");
+    wrap.className = "week-chip";
+    wrap.style.setProperty("--chip-color", color);
+    wrap.draggable = true;
+    wrap.title = label;
+
+    var handle = document.createElement("span");
+    handle.className = "week-chip-handle";
+    handle.setAttribute("aria-hidden", "true");
+    for (var i = 0; i < 6; i++) handle.appendChild(document.createElement("span"));
+    wrap.appendChild(handle);
+
+    var text = document.createElement("span");
+    text.className = "week-chip-label";
+    text.textContent = label;
+    wrap.appendChild(text);
+
+    wrap.addEventListener("dragstart", function (e) {
+      e.dataTransfer.setData("text/plain", chipData.id);
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    wrap.addEventListener("click", function () {
+      openTopIdeaForCategory(chipData.categoryId, chipData.subcategoryId);
+    });
+
+    return wrap;
+  }
+
+  function renderWeekNote(cellData) {
+    var wrap = document.createElement("div");
+    wrap.className = "week-note-wrap";
+
+    var display = document.createElement("button");
+    display.type = "button";
+    display.className = "week-note" + (cellData.note ? "" : " week-note-empty");
+    display.textContent = cellData.note || "+ nota";
+    display.setAttribute("aria-label", cellData.note ? "Editar nota" : "Adicionar nota");
+
+    display.addEventListener("click", function () {
+      var input = document.createElement("textarea");
+      input.className = "week-note-edit";
+      input.value = cellData.note;
+      input.setAttribute("aria-label", "Nota");
+      wrap.replaceChild(input, display);
+      input.focus();
+      var committed = false;
+      function commit() {
+        if (committed) return;
+        committed = true;
+        cellData.note = input.value.trim();
+        persist();
+        renderWeekView();
+      }
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); commit(); }
+        if (e.key === "Escape") { committed = true; renderWeekView(); }
+      });
+      input.addEventListener("blur", commit);
+    });
+
+    wrap.appendChild(display);
+    return wrap;
+  }
+
+  function renderWeekCell(dayId, periodId) {
+    var cellData = ensureCell(dayId, periodId);
+    var el = document.createElement("div");
+    el.className = "week-cell";
+
+    cellData.chips.forEach(function (chipData) {
+      el.appendChild(renderWeekChip(chipData));
+    });
+    el.appendChild(renderWeekNote(cellData));
+
+    el.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      el.classList.add("drag-over");
+    });
+    el.addEventListener("dragleave", function () { el.classList.remove("drag-over"); });
+    el.addEventListener("drop", function (e) {
+      e.preventDefault();
+      el.classList.remove("drag-over");
+      var chipId = e.dataTransfer.getData("text/plain");
+      if (chipId) moveChip(chipId, dayId, periodId);
+    });
+
+    return el;
+  }
+
+  function renderWeekView() {
+    weekViewEl.innerHTML = "";
+    var grid = document.createElement("div");
+    grid.className = "week-grid";
+
+    grid.appendChild(document.createElement("div")).className = "week-corner";
+    DAYS.forEach(function (d) {
+      var h = document.createElement("div");
+      h.className = "week-day-header";
+      h.textContent = d.label;
+      grid.appendChild(h);
+    });
+
+    PERIODS.forEach(function (p) {
+      var periodLabel = document.createElement("div");
+      periodLabel.className = "week-period-header";
+      periodLabel.textContent = p.label;
+      grid.appendChild(periodLabel);
+
+      DAYS.forEach(function (d) {
+        grid.appendChild(renderWeekCell(d.id, p.id));
+      });
+    });
+
+    weekViewEl.appendChild(grid);
+  }
+
+  mainTabsEl.addEventListener("click", function (e) {
+    var btn = e.target.closest(".tab-btn");
+    if (!btn) return;
+    mainTab = btn.dataset.tab;
+    renderMainTab();
+  });
+
   // --- Category management modal -----------------------------------------
 
   function openCatModal() {
@@ -3157,7 +3857,9 @@
   historyBtn.addEventListener("click", function () {
     searchInputEl.value = "";
     searchQuery = "";
+    mainTab = "categories";
     goToHistory();
+    renderMainTab();
   });
 
   searchInputEl.addEventListener("input", function () {
@@ -3304,7 +4006,7 @@
     });
   }
 
-  render();
+  renderMainTab();
 })();
 </script>
 </body>
