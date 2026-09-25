@@ -17,6 +17,8 @@ O ecrã principal mostra as categorias como cartões compactos (nome + contagem,
 
 Dentro de uma categoria, as ideias aparecem como lista compacta (uma linha cada): texto, categoria (só na vista "Todas"/"Por categorizar") e prioridade. Passar o cursor (ou tocar, em ecrãs táteis) revela as ações — copiar, concluir/reabrir, editar o texto, eliminar. Clicar no texto abre o detalhe completo (Bem-estar/Dinheiro/Tempo, imagem, categoria/subcategoria num dropdown dependente).
 
+Marcar uma ideia como concluída tira-a de todas as listas e contagens — fica só acessível no botão "Histórico" (ao lado de "Definições"), onde pode ser reaberta a qualquer momento. O campo de pesquisa por cima da lista procura em todas as ideias, de qualquer categoria (incluindo concluídas), independentemente de onde estiveres a navegar.
+
 Cada ideia pode ter uma imagem anexada (print, foto, etc.) — cola-a com Ctrl+V na caixa de texto, usa o botão "Imagem" ao lado de guardar, ou o "+ imagem" no detalhe de uma ideia já criada. As imagens são reduzidas automaticamente antes de serem guardadas.
 
 Para usar, basta abrir `index.html` diretamente no navegador — não precisa de build nem de servidor.

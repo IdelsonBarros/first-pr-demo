@@ -516,6 +516,12 @@
     gap: 12px;
   }
 
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .nav-header {
     display: flex;
     align-items: center;
@@ -524,6 +530,26 @@
     flex-wrap: wrap;
     min-height: 34px;
   }
+
+  .nav-search {
+    flex: 1;
+    display: flex;
+    min-width: 160px;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: 260px;
+    font: inherit;
+    font-size: 0.86rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); }
 
   .breadcrumb {
     display: flex;
@@ -883,7 +909,10 @@
     <header class="hero">
       <div class="hero-top">
         <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
-        <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
+        <div class="hero-actions">
+          <button type="button" class="btn-attach" id="historyBtn">Histórico</button>
+          <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
+        </div>
       </div>
       <p class="tagline">Cola as ideias soltas que tiveste. Ele arruma-as por área da vida e mostra o que vale mais a pena.</p>
     </header>
@@ -908,6 +937,9 @@
 
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
+      <div class="nav-search">
+        <input type="search" id="searchInput" class="search-input" placeholder="Pesquisar ideias..." aria-label="Pesquisar ideias" />
+      </div>
       <div class="nav-actions" id="navActions"></div>
     </section>
 
@@ -1474,6 +1506,12 @@
     gap: 12px;
   }
 
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .nav-header {
     display: flex;
     align-items: center;
@@ -1482,6 +1520,26 @@
     flex-wrap: wrap;
     min-height: 34px;
   }
+
+  .nav-search {
+    flex: 1;
+    display: flex;
+    min-width: 160px;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: 260px;
+    font: inherit;
+    font-size: 0.86rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); }
 
   .breadcrumb {
     display: flex;
@@ -1841,7 +1899,10 @@
     <header class="hero">
       <div class="hero-top">
         <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
-        <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
+        <div class="hero-actions">
+          <button type="button" class="btn-attach" id="historyBtn">Histórico</button>
+          <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
+        </div>
       </div>
       <p class="tagline">Cola as ideias soltas que tiveste. Ele arruma-as por área da vida e mostra o que vale mais a pena.</p>
     </header>
@@ -1866,6 +1927,9 @@
 
     <section class="nav-header">
       <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação"></nav>
+      <div class="nav-search">
+        <input type="search" id="searchInput" class="search-input" placeholder="Pesquisar ideias..." aria-label="Pesquisar ideias" />
+      </div>
       <div class="nav-actions" id="navActions"></div>
     </section>
 
@@ -2265,6 +2329,14 @@
   var ideas = loadInitialIdeas();
   var pendingImage = null;
 
+  // Each artifactCap.publish() causes a full reload of this tab (see
+  // persist() below), which is visible as a flash even with the navigation
+  // state preserved. Debouncing coalesces a quick burst of edits (e.g.
+  // ticking off several ideas in a row) into a single publish/reload
+  // instead of one per click.
+  var PERSIST_DEBOUNCE_MS = 700;
+  var persistDebounceTimer = null;
+
   // A successful artifactCap.publish() reloads this tab to the freshly
   // published document (that's how the sync capability works — see
   // persist() below), which would otherwise always drop the viewer back to
@@ -2291,10 +2363,14 @@
   var sortOrder = "priority";
   // { kind: "categories" }
   // { kind: "subcategories", categoryId }
-  // { kind: "ideas", scope: {type:"all"} | {type:"uncategorized"} |
+  // { kind: "ideas", scope: {type:"all"} | {type:"uncategorized"} | {type:"done"} |
   //   {type:"category", categoryId} | {type:"subcategory", categoryId, subcategoryId} |
   //   {type:"subcategory-none", categoryId} }
   var view = { kind: "categories" };
+  // A non-empty search overrides the board/breadcrumb/nav-actions regardless
+  // of view (see render()) — it's a lookup across every idea, not a place
+  // you navigate to and stay in, so it isn't part of the saved nav state.
+  var searchQuery = "";
 
   var savedNav = restoreNavState();
   if (savedNav) {
@@ -2305,6 +2381,8 @@
   var boardEl = document.getElementById("board");
   var breadcrumbEl = document.getElementById("breadcrumb");
   var navActionsEl = document.getElementById("navActions");
+  var historyBtn = document.getElementById("historyBtn");
+  var searchInputEl = document.getElementById("searchInput");
   var inputEl = document.getElementById("ideaInput");
   var submitBtn = document.getElementById("submitBtn");
   var attachBtn = document.getElementById("attachBtn");
@@ -2339,16 +2417,31 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
       localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
     } catch (e) { /* storage unavailable, state stays in memory for this render */ }
-    if (artifactCap) {
-      saveNavState();
-      artifactCap.publish(buildFullDocument()).catch(function (err) {
-        // "conflict": the platform is already reloading every view to the
-        // winning version. "too_large": say so — this browser's localStorage
-        // write above still stands. Anything else: same fallback, silently.
-        if (err && err.code === "too_large") updateSyncNote("too_large");
-      });
-    }
+    if (!artifactCap) return;
+    clearTimeout(persistDebounceTimer);
+    persistDebounceTimer = setTimeout(flushPersist, PERSIST_DEBOUNCE_MS);
   }
+
+  function flushPersist() {
+    persistDebounceTimer = null;
+    saveNavState();
+    artifactCap.publish(buildFullDocument()).catch(function (err) {
+      // "conflict": the platform is already reloading every view to the
+      // winning version. "too_large": say so — this browser's localStorage
+      // write above still stands. Anything else: same fallback, silently.
+      if (err && err.code === "too_large") updateSyncNote("too_large");
+    });
+  }
+
+  // Best-effort: if the tab is closed/hidden mid-debounce, flush right away
+  // instead of losing the pending sync (localStorage already has the data
+  // for this browser either way — this only affects cross-device sync).
+  window.addEventListener("pagehide", function () {
+    if (persistDebounceTimer) {
+      clearTimeout(persistDebounceTimer);
+      flushPersist();
+    }
+  });
 
   function updateSyncNote(warning) {
     var note = document.getElementById("syncNote");
@@ -2450,14 +2543,18 @@
   function goToCategories() { view = { kind: "categories" }; render(); }
   function goToSubcategories(categoryId) { view = { kind: "subcategories", categoryId: categoryId }; render(); }
   function goToIdeas(scope) { view = { kind: "ideas", scope: scope }; render(); }
+  function goToHistory() { goToIdeas({ type: "done" }); }
 
+  // A done idea disappears from every scope below and only shows up under
+  // "done" (the Histórico view) — that's the whole point of marking it done.
   function ideasForScope(scope) {
     switch (scope.type) {
-      case "all": return ideas.slice();
-      case "uncategorized": return ideas.filter(function (i) { return !i.categoryId; });
-      case "category": return ideas.filter(function (i) { return i.categoryId === scope.categoryId; });
-      case "subcategory": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && i.subcategoryId === scope.subcategoryId; });
-      case "subcategory-none": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && !i.subcategoryId; });
+      case "all": return ideas.filter(function (i) { return !i.done; });
+      case "uncategorized": return ideas.filter(function (i) { return !i.categoryId && !i.done; });
+      case "category": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && !i.done; });
+      case "subcategory": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && i.subcategoryId === scope.subcategoryId && !i.done; });
+      case "subcategory-none": return ideas.filter(function (i) { return i.categoryId === scope.categoryId && !i.subcategoryId && !i.done; });
+      case "done": return ideas.filter(function (i) { return i.done; });
       default: return [];
     }
   }
@@ -2486,6 +2583,10 @@
 
   function renderBreadcrumb() {
     breadcrumbEl.innerHTML = "";
+    if (searchQuery) {
+      breadcrumbEl.appendChild(crumbCurrent("Resultados da pesquisa"));
+      return;
+    }
     if (view.kind === "categories") return;
 
     breadcrumbEl.appendChild(crumbLink("Categorias", goToCategories));
@@ -2504,6 +2605,9 @@
     } else if (scope.type === "uncategorized") {
       breadcrumbEl.appendChild(crumbSep());
       breadcrumbEl.appendChild(crumbCurrent("Por categorizar"));
+    } else if (scope.type === "done") {
+      breadcrumbEl.appendChild(crumbSep());
+      breadcrumbEl.appendChild(crumbCurrent("Histórico"));
     } else {
       var cat2 = findCategory(scope.categoryId);
       var catLabel = cat2 ? cat2.label : "";
@@ -2533,6 +2637,7 @@
 
   function renderNavActions() {
     navActionsEl.innerHTML = "";
+    if (searchQuery) return;
     if (view.kind === "categories") {
       navActionsEl.appendChild(linkBtn("Ver todas as ideias →", function () { goToIdeas({ type: "all" }); }));
     } else if (view.kind === "ideas") {
@@ -2591,13 +2696,13 @@
     var grid = document.createElement("div");
     grid.className = "nav-grid";
     categories.forEach(function (cat) {
-      var count = ideas.filter(function (i) { return i.categoryId === cat.id; }).length;
+      var count = ideas.filter(function (i) { return i.categoryId === cat.id && !i.done; }).length;
       grid.appendChild(makeNavCard(cat.label, count, cat.color, cat.subcategories.length > 0, false, function () {
         if (cat.subcategories.length) goToSubcategories(cat.id);
         else goToIdeas({ type: "category", categoryId: cat.id });
       }));
     });
-    var uncatCount = ideas.filter(function (i) { return !i.categoryId; }).length;
+    var uncatCount = ideas.filter(function (i) { return !i.categoryId && !i.done; }).length;
     if (uncatCount > 0) {
       grid.appendChild(makeNavCard("Por categorizar", uncatCount, null, false, true, function () {
         goToIdeas({ type: "uncategorized" });
@@ -2617,12 +2722,12 @@
     var grid = document.createElement("div");
     grid.className = "nav-grid";
     cat.subcategories.forEach(function (sub) {
-      var count = ideas.filter(function (i) { return i.categoryId === cat.id && i.subcategoryId === sub.id; }).length;
+      var count = ideas.filter(function (i) { return i.categoryId === cat.id && i.subcategoryId === sub.id && !i.done; }).length;
       grid.appendChild(makeNavCard(sub.label, count, cat.color, false, false, function () {
         goToIdeas({ type: "subcategory", categoryId: cat.id, subcategoryId: sub.id });
       }));
     });
-    var noneCount = ideas.filter(function (i) { return i.categoryId === cat.id && !i.subcategoryId; }).length;
+    var noneCount = ideas.filter(function (i) { return i.categoryId === cat.id && !i.subcategoryId && !i.done; }).length;
     if (noneCount > 0) {
       grid.appendChild(makeNavCard("Sem subcategoria", noneCount, cat.color, false, true, function () {
         goToIdeas({ type: "subcategory-none", categoryId: cat.id });
@@ -3007,15 +3112,27 @@
     boardEl.appendChild(list_);
   }
 
+  function renderSearchResults() {
+    var norm = normalize(searchQuery);
+    var results = ideas.filter(function (i) { return normalize(i.text).indexOf(norm) !== -1; });
+    var label = document.createElement("p");
+    label.className = "field-label";
+    label.textContent = results.length + (results.length === 1 ? " resultado para \"" : " resultados para \"") + searchQuery + "\"";
+    boardEl.appendChild(label);
+    renderIdeasList(results, true);
+  }
+
   function renderBoard() {
     boardEl.innerHTML = "";
     boardEl.className = "board";
-    if (view.kind === "categories") {
+    if (searchQuery) {
+      renderSearchResults();
+    } else if (view.kind === "categories") {
       renderCategoriesGrid();
     } else if (view.kind === "subcategories") {
       renderSubcategoriesGrid(view.categoryId);
     } else {
-      var showCategory = view.scope.type === "all" || view.scope.type === "uncategorized";
+      var showCategory = view.scope.type === "all" || view.scope.type === "uncategorized" || view.scope.type === "done";
       renderIdeasList(ideasForScope(view.scope), showCategory);
     }
   }
@@ -3036,6 +3153,26 @@
   function closeCatModal() {
     catModalOverlay.hidden = true;
   }
+
+  historyBtn.addEventListener("click", function () {
+    searchInputEl.value = "";
+    searchQuery = "";
+    goToHistory();
+  });
+
+  searchInputEl.addEventListener("input", function () {
+    searchQuery = searchInputEl.value.trim();
+    render();
+  });
+
+  searchInputEl.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      searchInputEl.value = "";
+      searchQuery = "";
+      render();
+      searchInputEl.blur();
+    }
+  });
 
   manageCatsBtn.addEventListener("click", openCatModal);
   closeCatModalBtn.addEventListener("click", closeCatModal);
