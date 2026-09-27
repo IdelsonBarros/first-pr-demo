@@ -206,6 +206,20 @@
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-primary:active { transform: translateY(1px); }
 
+  .btn-danger {
+    background: var(--danger);
+    color: var(--danger-ink);
+    border: none;
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-danger:hover { filter: brightness(1.08); }
+  .btn-danger:active { transform: translateY(1px); }
+
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -884,6 +898,18 @@
     font-size: 0.95rem;
   }
 
+  .icon-btn-delete:hover { color: var(--danger-ink); background: var(--danger); }
+
+  .icon-btn-delete-strong { color: var(--danger); }
+
+  .confirm-modal-overlay { z-index: 30; }
+
+  .confirm-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
   .cat-manage-sub-list {
     margin-left: 21px;
     display: flex;
@@ -1130,6 +1156,16 @@
         <button type="button" class="icon-btn" id="closeIdeaModalBtn" aria-label="Fechar">×</button>
       </div>
       <div id="ideaModalBody"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay confirm-modal-overlay" id="confirmModalOverlay" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-label="Confirmar">
+      <p id="confirmModalText"></p>
+      <div class="confirm-modal-actions">
+        <button type="button" class="btn-attach" id="confirmModalCancelBtn">Cancelar</button>
+        <button type="button" class="btn-danger" id="confirmModalOkBtn">Eliminar</button>
+      </div>
     </div>
   </div>
 
@@ -1353,6 +1389,20 @@
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-primary:active { transform: translateY(1px); }
 
+  .btn-danger {
+    background: var(--danger);
+    color: var(--danger-ink);
+    border: none;
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-danger:hover { filter: brightness(1.08); }
+  .btn-danger:active { transform: translateY(1px); }
+
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -2031,6 +2081,18 @@
     font-size: 0.95rem;
   }
 
+  .icon-btn-delete:hover { color: var(--danger-ink); background: var(--danger); }
+
+  .icon-btn-delete-strong { color: var(--danger); }
+
+  .confirm-modal-overlay { z-index: 30; }
+
+  .confirm-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
   .cat-manage-sub-list {
     margin-left: 21px;
     display: flex;
@@ -2277,6 +2339,16 @@
         <button type="button" class="icon-btn" id="closeIdeaModalBtn" aria-label="Fechar">×</button>
       </div>
       <div id="ideaModalBody"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay confirm-modal-overlay" id="confirmModalOverlay" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-label="Confirmar">
+      <p id="confirmModalText"></p>
+      <div class="confirm-modal-actions">
+        <button type="button" class="btn-attach" id="confirmModalCancelBtn">Cancelar</button>
+        <button type="button" class="btn-danger" id="confirmModalOkBtn">Eliminar</button>
+      </div>
     </div>
   </div>
 
@@ -2877,6 +2949,11 @@
   var closeIdeaModalBtn = document.getElementById("closeIdeaModalBtn");
   var ideaModalBodyEl = document.getElementById("ideaModalBody");
   var currentModalIdea = null;
+  var confirmModalOverlay = document.getElementById("confirmModalOverlay");
+  var confirmModalText = document.getElementById("confirmModalText");
+  var confirmModalOkBtn = document.getElementById("confirmModalOkBtn");
+  var confirmModalCancelBtn = document.getElementById("confirmModalCancelBtn");
+  var confirmModalCallback = null;
 
   function buildFullDocument() {
     var ideasJson = JSON.stringify(ideas).replace(/</g, "\u003c");
@@ -3830,6 +3907,64 @@
     catModalOverlay.hidden = true;
   }
 
+  // A small confirmation modal reused for any destructive action that needs
+  // a "are you sure" step (currently just deleting a category/subcategory
+  // that still has ideas attached) — styled like the rest of the app rather
+  // than the browser's native confirm().
+  function askConfirm(message, onConfirm) {
+    confirmModalText.textContent = message;
+    confirmModalCallback = onConfirm;
+    confirmModalOverlay.hidden = false;
+  }
+
+  function closeConfirmModal() {
+    confirmModalOverlay.hidden = true;
+    confirmModalCallback = null;
+  }
+
+  confirmModalOkBtn.addEventListener("click", function () {
+    var cb = confirmModalCallback;
+    closeConfirmModal();
+    if (cb) cb();
+  });
+  confirmModalCancelBtn.addEventListener("click", closeConfirmModal);
+  confirmModalOverlay.addEventListener("click", function (e) {
+    if (e.target === confirmModalOverlay) closeConfirmModal();
+  });
+
+  // Deleting a category/subcategory never deletes the ideas filed under it —
+  // they get bumped to "por categorizar" (category) or "sem subcategoria"
+  // (subcategory) instead, so nothing the user wrote is ever lost.
+  function deleteCategory(cat) {
+    var affected = ideas.filter(function (i) { return i.categoryId === cat.id; });
+    function doDelete() {
+      affected.forEach(function (i) { i.categoryId = null; i.subcategoryId = null; });
+      categories = categories.filter(function (c) { return c.id !== cat.id; });
+      persist();
+      renderCatManageList();
+      render();
+    }
+    if (!affected.length) { doDelete(); return; }
+    var msg = "Esta categoria tem " + affected.length + (affected.length === 1 ? " ideia associada" : " ideias associadas") +
+      ". Eliminar a categoria não apaga as ideias — ficam marcadas como \"Por categorizar\" e podes reclassificá-las mais tarde. Continuar?";
+    askConfirm(msg, doDelete);
+  }
+
+  function deleteSubcategory(cat, sub) {
+    var affected = ideas.filter(function (i) { return i.categoryId === cat.id && i.subcategoryId === sub.id; });
+    function doDelete() {
+      affected.forEach(function (i) { i.subcategoryId = null; });
+      cat.subcategories = cat.subcategories.filter(function (s) { return s.id !== sub.id; });
+      persist();
+      renderCatManageList();
+      render();
+    }
+    if (!affected.length) { doDelete(); return; }
+    var msg = "Esta subcategoria tem " + affected.length + (affected.length === 1 ? " ideia associada" : " ideias associadas") +
+      ". Eliminar a subcategoria não apaga as ideias — ficam sem subcategoria dentro de \"" + cat.label + "\" e podes reclassificá-las mais tarde. Continuar?";
+    askConfirm(msg, doDelete);
+  }
+
   historyBtn.addEventListener("click", function () {
     searchInputEl.value = "";
     searchQuery = "";
@@ -3857,7 +3992,9 @@
     if (e.target === catModalOverlay) closeCatModal();
   });
 
-  function renderManageRow(label, color, onRename) {
+  // variant is "category" or "subcategory" — only affects the delete icon's
+  // color (see .icon-btn-delete-strong); both are equally deletable.
+  function renderManageRow(label, color, onRename, onDelete, variant) {
     var row = document.createElement("div");
     row.className = "cat-manage-row";
     var dot = document.createElement("span");
@@ -3866,11 +4003,19 @@
     var nameSpan = document.createElement("span");
     nameSpan.className = "cat-manage-name";
     nameSpan.textContent = label;
+
     var editBtn = document.createElement("button");
     editBtn.type = "button";
     editBtn.className = "icon-btn";
     editBtn.setAttribute("aria-label", "Renomear " + label);
     editBtn.textContent = "✎";
+
+    var deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "icon-btn icon-btn-delete" + (variant === "category" ? " icon-btn-delete-strong" : "");
+    deleteBtn.setAttribute("aria-label", "Eliminar " + label);
+    deleteBtn.textContent = "🗑";
+    deleteBtn.addEventListener("click", onDelete);
 
     editBtn.addEventListener("click", function () {
       var input = document.createElement("input");
@@ -3879,6 +4024,7 @@
       input.value = label;
       row.replaceChild(input, nameSpan);
       row.removeChild(editBtn);
+      row.removeChild(deleteBtn);
       input.focus();
       input.select();
       var committed = false;
@@ -3898,6 +4044,7 @@
     row.appendChild(dot);
     row.appendChild(nameSpan);
     row.appendChild(editBtn);
+    row.appendChild(deleteBtn);
     return row;
   }
 
@@ -3910,7 +4057,7 @@
       persist();
       renderCatManageList();
       render();
-    }));
+    }, function () { deleteCategory(cat); }, "category"));
 
     var subList = document.createElement("div");
     subList.className = "cat-manage-sub-list";
@@ -3920,7 +4067,7 @@
         persist();
         renderCatManageList();
         render();
-      }));
+      }, function () { deleteSubcategory(cat, sub); }, "subcategory"));
     });
     group.appendChild(subList);
 
