@@ -2421,7 +2421,10 @@
   // Applied to whatever category list is loaded (fresh defaults or
   // already-persisted data) so existing installs pick up the D_ -> Sistemas
   // rename and the new subcategories without losing anything the user
-  // already added. Idempotent: safe to run on data that already has them.
+  // already added. The subcategory backfill is marked done on each category
+  // (_newSubcatsMigrated) so it runs exactly once ever, not on every load —
+  // otherwise a category that had these subcategories deleted on purpose
+  // would see them silently reappear on the next reload.
   function migrateCategories(cats) {
     var d = cats.filter(function (c) { return c.id === "d_"; })[0];
     if (d && d.label === "D_") d.label = "Sistemas";
@@ -2433,14 +2436,20 @@
     }
 
     var aprendizagem = cats.filter(function (c) { return c.id === "aprendizagem"; })[0];
-    ensureSub(aprendizagem, "cursos", "Cursos");
-    ensureSub(aprendizagem, "conceitos", "Conceitos");
+    if (aprendizagem && !aprendizagem._newSubcatsMigrated) {
+      ensureSub(aprendizagem, "cursos", "Cursos");
+      ensureSub(aprendizagem, "conceitos", "Conceitos");
+      aprendizagem._newSubcatsMigrated = true;
+    }
 
     var casa = cats.filter(function (c) { return c.id === "casa"; })[0];
-    ensureSub(casa, "manutencao", "Manutenção");
-    ensureSub(casa, "saude-cuidados-pessoais", "Saúde & Cuidados Pessoais");
-    ensureSub(casa, "rotina-produtividade", "Rotina & Produtividade");
-    ensureSub(casa, "lazer", "Lazer");
+    if (casa && !casa._newSubcatsMigrated) {
+      ensureSub(casa, "manutencao", "Manutenção");
+      ensureSub(casa, "saude-cuidados-pessoais", "Saúde & Cuidados Pessoais");
+      ensureSub(casa, "rotina-produtividade", "Rotina & Produtividade");
+      ensureSub(casa, "lazer", "Lazer");
+      casa._newSubcatsMigrated = true;
+    }
 
     return cats;
   }
@@ -2890,7 +2899,11 @@
   // up once, so editing or deleting an idea keeps you where you were.
   function saveNavState() {
     try {
-      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({ view: view, sortOrder: sortOrder }));
+      sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify({
+        view: view,
+        sortOrder: sortOrder,
+        catModalOpen: !catModalOverlay.hidden
+      }));
     } catch (e) { /* sessionStorage unavailable; the reload lands on the default view */ }
   }
 
@@ -4130,6 +4143,10 @@
 
   renderWeekView();
   render();
+  // Mirrors the view/sortOrder restore above: a delete/rename/add inside
+  // "Definições" triggers the same publish-driven reload as any other
+  // change, which would otherwise silently snap the modal shut mid-edit.
+  if (savedNav && savedNav.catModalOpen) openCatModal();
 })();
 </script>
 </body>
