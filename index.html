@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <title>uCOPO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Cola ideias soltas e o uCOPO arruma-as por área da vida ou projeto, e ordena-as pelo que rende mais bem-estar, dinheiro ou tempo." />
+<meta name="description" content="Cola ideias soltas e o uCOPO arruma-as por área da vida ou projeto, prontas para ordenares pela prioridade que lhes deres." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -313,39 +313,6 @@
     color: var(--text);
     white-space: pre-wrap;
     word-break: break-word;
-  }
-
-  .axes {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .axis-row {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-  }
-
-  .axis-meter {
-    display: flex;
-    gap: 3px;
-  }
-
-  .axis-seg {
-    height: 5px;
-    flex: 1;
-    border-radius: 2px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-  }
-
-  .axis-seg.filled {
-    background: var(--accent);
-    border-color: var(--accent);
   }
 
   .card-bottom {
@@ -1043,10 +1010,14 @@
     font-size: 0.68rem;
     font-weight: 600;
     padding: 2px 9px;
+    border: none;
     border-radius: 999px;
     white-space: nowrap;
     flex: none;
+    transition: filter 0.15s ease;
   }
+
+  .priority-pill:hover { filter: brightness(1.08); }
 
   .priority-pill.alta { background: color-mix(in srgb, var(--danger) 22%, var(--surface)); color: var(--danger); }
   .priority-pill.media { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); color: var(--accent); }
@@ -1187,7 +1158,7 @@
 <meta charset="UTF-8" />
 <title>uCOPO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Cola ideias soltas e o uCOPO arruma-as por área da vida ou projeto, e ordena-as pelo que rende mais bem-estar, dinheiro ou tempo." />
+<meta name="description" content="Cola ideias soltas e o uCOPO arruma-as por área da vida ou projeto, prontas para ordenares pela prioridade que lhes deres." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1496,39 +1467,6 @@
     color: var(--text);
     white-space: pre-wrap;
     word-break: break-word;
-  }
-
-  .axes {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .axis-row {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-  }
-
-  .axis-meter {
-    display: flex;
-    gap: 3px;
-  }
-
-  .axis-seg {
-    height: 5px;
-    flex: 1;
-    border-radius: 2px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-  }
-
-  .axis-seg.filled {
-    background: var(--accent);
-    border-color: var(--accent);
   }
 
   .card-bottom {
@@ -2226,10 +2164,14 @@
     font-size: 0.68rem;
     font-weight: 600;
     padding: 2px 9px;
+    border: none;
     border-radius: 999px;
     white-space: nowrap;
     flex: none;
+    transition: filter 0.15s ease;
   }
+
+  .priority-pill:hover { filter: brightness(1.08); }
 
   .priority-pill.alta { background: color-mix(in srgb, var(--danger) 22%, var(--surface)); color: var(--danger); }
   .priority-pill.media { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); color: var(--accent); }
@@ -2609,17 +2551,6 @@
     return cell;
   }
 
-  // --- Relevance axes ------------------------------------------------------
-
-  var AXES = [
-    { id: "bemEstar", label: "Bem-estar",
-      keywords: ["saude","bem-estar","bem estar","relaxar","descanso","descansar","dormir","meditar","meditacao","familia","amigos","feliz","felicidade","alegria","exercicio","exercitar","correr","alongamento","ar livre","natureza","viagem","ferias","lazer","hobby","tempo livre","autocuidado","terapia"] },
-    { id: "dinheiro", label: "Dinheiro",
-      keywords: ["vender","venda","lucro","lucrativo","renda extra","renda","cliente","clientes","negocio","negocios","investir","investimento","ganhar dinheiro","faturar","faturamento","preco","precificar","monetizar","assinatura","produto pago","servico pago","comissao","patrocinio","parceria paga","orcamento","previs"] },
-    { id: "tempo", label: "Tempo",
-      keywords: ["automatizar","automatizacao","automatico","rapido","rapida","eficiente","eficiencia","produtividade","produtivo","organizar","organizacao","simplificar","otimizar","otimizacao","agilizar","atalho","template","modelo pronto","checklist","rotina","agenda","planejamento","delegar"] }
-  ];
-
   // --- Classification --------------------------------------------------
 
   // Specific enough to name a subcategory outright, checked before the
@@ -2761,7 +2692,7 @@
     for (var i = 0; i < STRONG_SIGNALS.length; i++) {
       var signal = STRONG_SIGNALS[i];
       if (countHits(norm, signal.keywords) > 0) {
-        return finishClassify(norm, signal.categoryId, signal.subcategoryId);
+        return { categoryId: signal.categoryId, subcategoryId: signal.subcategoryId };
       }
     }
 
@@ -2772,23 +2703,7 @@
       if (hits > bestHits) { bestHits = hits; bestId = id; }
     });
 
-    return finishClassify(norm, bestId, null);
-  }
-
-  function finishClassify(norm, categoryId, subcategoryId) {
-    var scores = {};
-    var axesHit = 0;
-    AXES.forEach(function (axis) {
-      var hits = countHits(norm, axis.keywords);
-      if (hits > 0) axesHit++;
-      scores[axis.id] = Math.min(hits, 3);
-    });
-
-    var priority = "baixa";
-    if (axesHit >= 2) priority = "alta";
-    else if (axesHit === 1) priority = "media";
-
-    return { categoryId: categoryId, subcategoryId: subcategoryId, scores: scores, priority: priority };
+    return { categoryId: bestId, subcategoryId: null };
   }
 
   function uid() {
@@ -3067,15 +2982,17 @@
       var tag = parseCategoryTag(line) || parseHyphenTag(line);
       var ideaText = tag ? tag.text : line;
       var result = tag
-        ? finishClassify(normalize(tag.text), tag.categoryId, tag.subcategoryId)
+        ? { categoryId: tag.categoryId, subcategoryId: tag.subcategoryId }
         : classify(line);
       ideas.push({
         id: uid(),
         text: ideaText,
         categoryId: result.categoryId,
         subcategoryId: result.subcategoryId,
-        scores: result.scores,
-        priority: result.priority,
+        // Prioridade fica sempre em "baixa" por defeito — deixou de ser
+        // inferida por palavras-chave; é o utilizador que a ajusta a
+        // clicar na pílula (ver renderPriorityPill).
+        priority: "baixa",
         createdAt: Date.now(),
         // A pending image (pasted or attached) belongs to whatever is being
         // composed right now, so it only rides along with the first idea of
@@ -3327,19 +3244,26 @@
     return { color: cat.color, label: sub ? cat.label + " · " + sub.label : cat.label };
   }
 
-  function renderAxisRow(axis, value) {
-    var segs = "";
-    for (var i = 0; i < 3; i++) {
-      segs += '<span class="axis-seg' + (i < value ? " filled" : "") + '"></span>';
-    }
-    return '<div class="axis-row"><span>' + axis.label + '</span><span class="axis-meter">' + segs + "</span></div>";
+  function nextPriority(p) {
+    return p === "baixa" ? "media" : p === "media" ? "alta" : "baixa";
   }
 
-  function renderPriorityPill(priority) {
-    var label = priority === "alta" ? "Alta" : priority === "media" ? "Média" : "Baixa";
-    var pill = document.createElement("span");
-    pill.className = "priority-pill " + priority;
+  // A clickable pill instead of a static label: a click cycles
+  // Baixa -> Média -> Alta -> Baixa, since prioridade já não é inferida
+  // automaticamente — é o utilizador que a define.
+  function renderPriorityPill(idea, onChange) {
+    var label = idea.priority === "alta" ? "Alta" : idea.priority === "media" ? "Média" : "Baixa";
+    var pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = "priority-pill " + idea.priority;
     pill.textContent = label;
+    pill.setAttribute("aria-label", "Prioridade: " + label + " — clica para mudar");
+    pill.addEventListener("click", function (e) {
+      e.stopPropagation();
+      idea.priority = nextPriority(idea.priority);
+      persist();
+      onChange();
+    });
     return pill;
   }
 
@@ -3455,7 +3379,7 @@
     return addBtn;
   }
 
-  // Card = the full detail view (image, relevance bars, category pickers).
+  // Card = the full detail view (image, prioridade, category pickers).
   // It used to sit directly on the board; now it's mounted inside the idea
   // detail modal, and the compact list row (renderIdeaRow, below) is what
   // the board actually shows.
@@ -3479,15 +3403,9 @@
     text.className = "idea-text";
     text.textContent = idea.text;
 
-    var axesWrap = document.createElement("div");
-    axesWrap.className = "axes";
-    axesWrap.innerHTML = AXES.map(function (axis) {
-      return renderAxisRow(axis, idea.scores[axis.id] || 0);
-    }).join("");
-
     var bottom = document.createElement("div");
     bottom.className = "card-bottom";
-    bottom.appendChild(renderPriorityPill(idea.priority));
+    bottom.appendChild(renderPriorityPill(idea, function () { renderAndRefresh(idea); }));
 
     var metaRight = document.createElement("div");
     metaRight.className = "meta-right";
@@ -3501,7 +3419,6 @@
     card.appendChild(top);
     card.appendChild(text);
     card.appendChild(renderIdeaImage(idea));
-    card.appendChild(axesWrap);
     card.appendChild(bottom);
     return card;
   }
@@ -3629,7 +3546,7 @@
       row.appendChild(catLabel);
     }
 
-    row.appendChild(renderPriorityPill(idea.priority));
+    row.appendChild(renderPriorityPill(idea, render));
 
     var actions = document.createElement("div");
     actions.className = "row-actions";
