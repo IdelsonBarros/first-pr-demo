@@ -1061,6 +1061,7 @@
         <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
         <div class="hero-actions">
           <button type="button" class="btn-attach" id="historyBtn">Histórico</button>
+          <button type="button" class="btn-attach" id="exportIdeasBtn">Exportar ideias</button>
           <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
         </div>
       </div>
@@ -2215,6 +2216,7 @@
         <h1 class="wordmark"><span class="flourish">u</span>COPO</h1>
         <div class="hero-actions">
           <button type="button" class="btn-attach" id="historyBtn">Histórico</button>
+          <button type="button" class="btn-attach" id="exportIdeasBtn">Exportar ideias</button>
           <button type="button" class="btn-attach" id="manageCatsBtn">Definições</button>
         </div>
       </div>
@@ -2857,6 +2859,7 @@
   var navHeaderEl = document.querySelector(".nav-header");
   var weekViewEl = document.getElementById("weekView");
   var historyBtn = document.getElementById("historyBtn");
+  var exportIdeasBtn = document.getElementById("exportIdeasBtn");
   var searchInputEl = document.getElementById("searchInput");
   var inputEl = document.getElementById("ideaInput");
   var submitBtn = document.getElementById("submitBtn");
@@ -3900,6 +3903,111 @@
     searchQuery = "";
     goToHistory();
     navHeaderEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // --- Exportar ideias (ucopo_ideias.txt) ---------------------------------
+
+  function formatDateYMD(ms) {
+    if (!ms) return "";
+    var d = new Date(ms);
+    if (isNaN(d.getTime())) return "";
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function exportFieldsFor(idea) {
+    var cat = findCategory(idea.categoryId);
+    var sub = cat ? findSubcategory(idea.categoryId, idea.subcategoryId) : null;
+    return {
+      categoryLabel: cat ? cat.label : "Por categorizar",
+      subcategoryLabel: sub ? sub.label : "",
+      state: idea.done ? "concluida" : "pendente",
+      date: formatDateYMD(idea.createdAt)
+    };
+  }
+
+  // Uma ideia por linha, "Categoria | Subcategoria | Estado | Data | Ideia";
+  // termina com um resumo (total e total por categoria) para conferência.
+  function buildExportText() {
+    var lines = ideas.map(function (idea) {
+      var f = exportFieldsFor(idea);
+      return [f.categoryLabel, f.subcategoryLabel, f.state, f.date, idea.text].join(" | ");
+    });
+
+    var countsByLabel = {};
+    var order = [];
+    ideas.forEach(function (idea) {
+      var label = exportFieldsFor(idea).categoryLabel;
+      if (!Object.prototype.hasOwnProperty.call(countsByLabel, label)) {
+        countsByLabel[label] = 0;
+        order.push(label);
+      }
+      countsByLabel[label]++;
+    });
+    // "Por categorizar" sempre no fim do resumo, as restantes pela ordem em
+    // que aparecem nas categorias configuradas.
+    order.sort(function (a, b) {
+      if (a === "Por categorizar") return 1;
+      if (b === "Por categorizar") return -1;
+      return 0;
+    });
+
+    var summary = ["", "--- Resumo ---", "Total: " + ideas.length + " ideias"];
+    order.forEach(function (label) {
+      summary.push(label + ": " + countsByLabel[label]);
+    });
+
+    return lines.concat(summary).join("\n");
+  }
+
+  function copyTextToClipboard(text, onDone) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onDone).catch(function () { legacyCopy(text, onDone); });
+    } else {
+      legacyCopy(text, onDone);
+    }
+  }
+
+  // Opened as a local file, a plain blob link triggers a real browser
+  // download. Published as a Claude artifact, the page runs sandboxed and
+  // that link silently does nothing — the viewer must hand the file over
+  // through the "downloads" capability instead, which shows its own
+  // save/share confirmation.
+  function downloadTextFileLocally(filename, text) {
+    var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function offerDownload(filename, text) {
+    if (window.claude && typeof window.claude.use === "function") {
+      window.claude.use("downloads").then(function (cap) {
+        if (!cap) { downloadTextFileLocally(filename, text); return; }
+        // Rejection ("declined", rate-limited, etc.) just means no file was
+        // saved; the clipboard copy still went through regardless.
+        cap.save({ filename: filename, data: text }).catch(function () {});
+      });
+    } else {
+      downloadTextFileLocally(filename, text);
+    }
+  }
+
+  exportIdeasBtn.addEventListener("click", function () {
+    var text = buildExportText();
+    offerDownload("ucopo_ideias.txt", text);
+    copyTextToClipboard(text, function () {
+      var original = exportIdeasBtn.textContent;
+      exportIdeasBtn.textContent = "✓ Exportado";
+      setTimeout(function () { exportIdeasBtn.textContent = original; }, 1800);
+    });
   });
 
   searchInputEl.addEventListener("input", function () {
